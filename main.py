@@ -147,15 +147,25 @@ class Vehicle(SmartVehicle):
         self.direction = direction
         self.lane = lane
 
-users = {} # Creating an empty users dictionary in order to store the new user objects in the dictionary
+    @property
+    def car_type(self):
+        return self.type
+
+class Car(Vehicle):
+    def print_state(self):
+        print(f"Car type: {self.type}")
+        print(f"Velocity: {self.velocity}")
+        print(f"Direction: {self.direction}")
+        print(f"Lane: {self.lane}")
+
 
 class Control_Unit(SO_Control_Unit):
-
-    def __init__(self, users=None, obstacles=None, status=False, log=None):
-        self.users = set()
+    def __init__(self, users=None, obstacles=None, status=False, log=None, user_db=None):
+        self.users = users # A set that stores the usernames for easier membership test
         self.obstacles = obstacles
         self.status = status
         self.log = log
+        self.user_db = user_db # A list to store user objects
 
     def add_user(self):
         new_user= []
@@ -220,11 +230,35 @@ class Control_Unit(SO_Control_Unit):
     def state(self):
         raise NotImplementedError
 
-class User:
-    pass
+class User(System_User:
+    def __init__(self, name, surname, username):
+        self.name = name
+        self.surname = surname
+        self.username = username
+
+    def turn_on(self):
 
 
-# Menus
+        pass
+# Creating objects
+
+control_unit = Control_Unit()
+car = Car()
+
+
+
+# User menu
+
+def user_login():
+    print(25 * "=", "WELCOME TO SMART CAR INFORMATION SYSTEM (SCIS)", 24 * "=")
+    print("""
+        Please enter your username to log in to the system.
+        """)
+    username = int(input("Username : "))
+    Print("")
+    print(97 * "=")
+
+    if
 
 def main_menu():
     print(30 * "=", "SMART CAR INFORMATION SYSTEM (SCIS)", 30 * "=")
@@ -270,9 +304,7 @@ def inf_menu():
         elif choice == 2:
             pass
         elif choice == 3:
-            print("Thank you for using SCIS!")
-            sleep(2)
-            exit()
+            pass
         elif choice == 4:
             main_menu()
         elif choice == 5:
@@ -284,10 +316,55 @@ def inf_menu():
             sleep(2)
             inf_menu()
 
-    pass
 
 def interact_menu():
-    print("I am the interaction menu")
-    pass
+    print(30 * "=", "SMART CAR INFORMATION SYSTEM (SCIS)", 30 * "=")
+    print("""
+    INTERACTION MENU
+
+        1. Start the car
+        2. Accelerate
+        3. Brake
+        4. Place an obstacle
+        5. Put a traffic sign
+        6. Simulate a car
+        7. Stop the car
+        8. Add a user
+        9. Delete a user
+        10. Return to main menu
+        11. Exit the system
+        """)
+    print(97 * "=")
+
+    choice = int(input("Please make your choice [1-5] : "))
+    while True:
+        if choice == 1:
+            pass # Start the car
+        elif choice == 2:
+            pass # Accelerate
+        elif choice == 3:
+            pass # Brake
+        elif choice == 4:
+            pass  # Place an obstacle
+        elif choice == 5:
+            pass  # Put a traffic sign
+        elif choice == 6:
+            pass  # Car
+        elif choice == 7:
+            pass  # Stop the car
+        elif choice == 8:
+            pass  # Add a user
+        elif choice == 9:
+            pass  # Delete a user
+        elif choice == 10:
+            main_menu()
+        elif choice == 11:
+            print("Thank you for using SCIS!")
+            sleep(2)
+            exit()
+        else:
+            print("You have entered an invalid choice. Please try again.")
+            sleep(2)
+            inf_menu()
 
 main_menu()

@@ -2,7 +2,6 @@ from abc import ABC, abstractmethod
 from time import sleep
 from sys import exit
 
-
 #Defining interfaces:
 
 class SO_Control_Unit(ABC):
@@ -110,7 +109,7 @@ class Smart_Vehicle(ABC):
 class Sensor(ABC):
     def __init__(self, obstacles, types):
         self._obstacles = obstacles # A list to add obstacle objects
-        self._types = types # Do we really need this?
+        self._types = types # Do we really need this? Implemented only the getter method.
 
     @abstractmethod
     def detect(self):
@@ -127,11 +126,13 @@ class Sensor(ABC):
 
     @obstacles.setter
     @abstractmethod
-    def obstacles(self):
+    def obstacles(self, value):
         raise NotImplementedError
 
-
-
+    @property
+    @abstractmethod
+    def types(self):
+        raise NotImplementedError
 
 class Comms_Module(ABC):
     @abstractmethod
@@ -144,23 +145,64 @@ class Comms_Module(ABC):
 
 class Obstacles(ABC):
     def __init__(self, type, lane):
-        self.type = type
-        self.lane = lane # Refers to the lane on the road where the obstacle is located
+        self._type = type
+        self._lane = lane # Refers to the lane on the road where the obstacle is located
+
+    @property
+    @abstractmethod
+    def type(self):
+        raise NotImplementedError
+
+    @type.setter
+    @abstractmethod
+    def type(self):
+        raise NotImplementedError
 
 class System_User(ABC):
     def __init__(self, name, surname, username):
-        self.name = name
-        self.surname = surname
-        self.username = username
+        self._name = name
+        self._surname = surname
+        self._username = username
 
     @abstractmethod
     def turn_on(self):
         # Turns on the car
         raise NotImplementedError
 
+    @property
+    @abstractmethod
+    def name(self):
+        raise NotImplementedError
+
+    @name.setter
+    @abstractmethod
+    def name(self, value):
+        raise NotImplementedError
+
+    @property
+    @abstractmethod
+    def surname(self):
+        raise NotImplementedError
+
+    @surname.setter
+    @abstractmethod
+    def surname(self, value):
+        raise NotImplementedError
+
+    @property
+    @abstractmethod
+    def username(self):
+        raise NotImplementedError
+
+    @username.setter
+    @abstractmethod
+    def username(self, value):
+        raise NotImplementedError
+
+
 class Sign_Recognition_System(ABC):
     def __init__(self, sign_data):
-        self.sign_data = sign_data
+        self._sign_data = sign_data
 
     @abstractmethod
     def detect_sign(self):
@@ -176,7 +218,12 @@ class Sign_Recognition_System(ABC):
 
 class Traffic_Sign(ABC):
     def __init__(self, type):
-        self.type = type
+        self._type = type
+
+    @property
+    @abstractmethod
+    def type(self):
+        raise NotImplementedError
 
 class Sign_DB(ABC):
     def __init__(self, signs):
@@ -186,10 +233,10 @@ class Sign_DB(ABC):
     def check_sign(self):
         raise NotImplementedError
 
+    @property
     @abstractmethod
     def list_signs(self):
         raise NotImplementedError
-
 
 # Creating classes:
 
@@ -237,11 +284,11 @@ class Car(Vehicle):
 
 class Control_Unit(SO_Control_Unit):
     def __init__(self, users=None, obstacles=None, status=False, log=None, user_db=None):
-        self.users = users # A set that stores the usernames for easier membership test
-        self.obstacles = obstacles
-        self.status = status
-        self.log = log
-        self.user_db = user_db # A list to store user objects
+        self._users = users # A set that stores the usernames for easier membership test
+        self._obstacles = obstacles
+        self._status = status
+        self._log = log
+        self._user_db = user_db # A list to store user objects
 
     def add_user(self):
         new_user= []
@@ -265,57 +312,62 @@ class Control_Unit(SO_Control_Unit):
         # Authenticates user
         raise NotImplementedError #Since it is more descriptive, we raise NotImplementedError instead of "pass"
 
-    @abstractmethod
     def start_car(self):
         raise NotImplementedError
 
-    @abstractmethod
     def accelerate(self):
         raise NotImplementedError
 
-    @abstractmethod
     def brake(self):
         raise NotImplementedError
 
-    @abstractmethod
     def stop(self):
         raise NotImplementedError
 
-    @abstractmethod
     def eval_sign(self):
         #Evaluates traffic signs detected
         raise NotImplementedError
 
-    @abstractmethod
     def eval_veh(self):
         #Evaluates other vehicles detected
         raise NotImplementedError
 
-    @abstractmethod
     def eval_obs(self):
         #Evaluates obstacles detected
         raise NotImplementedError
 
     @property
-    @abstractmethod
-    def state(self):
-        raise NotImplementedError
+    def status(self):
+        return self._status
 
     @state.setter
-    @abstractmethod
-    def state(self):
-        raise NotImplementedError
+    def status(self, value):
+        self._status = value
 
-class User(System_User:
+class User(System_User):
     def __init__(self, name, surname, username):
-        self.name = name
-        self.surname = surname
-        self.username = username
+        self._name = name
+        self._surname = surname
+        self._username = username
 
     def turn_on(self):
+        if Control_Unit.status == True:
+            print("The car is already turned on!")
+        else:
+            Control_Unit.status = True
 
+    @surname.setter
+    def surname(self, value):
+        self._surname = value
 
-        pass
+    @property
+    def username(self):
+        return self._username
+
+    @username.setter
+    def username(self, value):
+        self._username = value
+
 # Creating objects
 
 control_unit = Control_Unit()

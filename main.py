@@ -8,11 +8,11 @@ from sys import exit
 class SO_Control_Unit(ABC):
     """Control unit stores all the critical information and manages the car."""
 
-    def __init__(self, users, obstacles, status, log):
-        self.users = users
-        self.obstacles = obstacles
-        self.status = status
-        self.log = log
+    def __init__(self, users, obstacles, log, status=False):
+        self._users = users
+        self._obstacles = obstacles
+        self._log = log
+        self._status = status
 
     @abstractmethod
     def auth(self, user):
@@ -52,25 +52,65 @@ class SO_Control_Unit(ABC):
 
     @property
     @abstractmethod
-    def state(self):
+    def status(self):
         raise NotImplementedError
 
     @state.setter
     @abstractmethod
-    def state(self):
+    def status(self):
         raise NotImplementedError
 
 class Smart_Vehicle(ABC):
     def __init__(self, type, velocity, direction, lane):
-        self.type = type
-        self.velocity = velocity
-        self.direction = direction
-        self.lane = lane
+        self._type = type
+        self._velocity = velocity
+        self._direction = direction
+        self._lane = lane
+
+        @property
+        @abstractmethod
+        def type(self):
+            raise NotImplementedError
+
+        @type.setter
+        @abstractmethod
+        def type(self, value):
+            raise NotImplementedError
+
+        @property
+        @abstractmethod
+        def velocity(self):
+            raise NotImplementedError
+
+        @velocity.setter
+        @abstractmethod
+        def velocity(self, value):
+            raise NotImplementedError
+
+        @property
+        @abstractmethod
+        def direction(self):
+            raise NotImplementedError
+
+        @direction.setter
+        @abstractmethod
+        def direction(self, value):
+            raise NotImplementedError
+
+        @property
+        @abstractmethod
+        def lane(self):
+            raise NotImplementedError
+
+        @lane.setter
+        @abstractmethod
+        def lane(self, value):
+            raise NotImplementedError
 
 class Sensor(ABC):
     def __init__(self, obstacles, types):
-        self.obstacles = obstacles
-        self.types = types
+        self._obstacles = obstacles # A list to add obstacle objects
+        self._types = types # Do we really need this?
 
     @abstractmethod
     def detect(self):
@@ -79,6 +119,19 @@ class Sensor(ABC):
     @abstractmethod
     def send_data(self):
         raise NotImplementedError
+
+    @property
+    @abstractmethod
+    def obstacles(self):
+        raise NotImplementedError
+
+    @obstacles.setter
+    @abstractmethod
+    def obstacles(self):
+        raise NotImplementedError
+
+
+
 
 class Comms_Module(ABC):
     @abstractmethod
@@ -141,15 +194,38 @@ class Sign_DB(ABC):
 # Creating classes:
 
 class Vehicle(SmartVehicle):
-    def __init__(self, type, velocity, direction, lane):
-        self.type = type
-        self.velocity = velocity
-        self.direction = direction
-        self.lane = lane
 
     @property
-    def car_type(self):
+    def type(self):
         return self.type
+
+    @type.setter
+    def type(self, value):
+        self.type = value
+
+    @property
+    def velocity(self):
+        return self.velocity
+
+    @velocity.setter
+    def velocity(self, value):
+        self.velocity = value
+
+    @property
+    def direction(self):
+        return self.direction
+
+    @direction.setter
+    def direction(self, value):
+        self.direction = value
+
+    @property
+    def lane(self):
+        return self.lane
+
+    @lane.setter
+    def lane(self, value):
+        self.lane = value
 
 class Car(Vehicle):
     def print_state(self):

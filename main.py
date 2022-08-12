@@ -396,7 +396,6 @@ class Lidar(Sensor):
     def obstacle(self):
         return self._obstacle
 
-
 class Obstacle(Obstacles):
     def __init__(self, type, lane):
         self._type = type

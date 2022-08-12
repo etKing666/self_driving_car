@@ -59,6 +59,26 @@ class SO_Control_Unit(ABC):
     def status(self):
         raise NotImplementedError
 
+    @property
+    @abstractmethod
+    def users(self):
+        raise NotImplementedError
+
+    @users.setter
+    @abstractmethod
+    def users(self, value):
+        raise NotImplementedError
+
+    @property
+    @abstractmethod
+    def obstacles(self):
+        raise NotImplementedError
+
+    @obstacles.setter
+    @abstractmethod
+    def obstacles(self, value):
+        raise NotImplementedError
+
 class Smart_Vehicle(ABC):
     def __init__(self, type, direction, lane, velocity=0):
         self._type = type
@@ -107,9 +127,9 @@ class Smart_Vehicle(ABC):
             raise NotImplementedError
 
 class Sensor(ABC):
-    def __init__(self, obstacles, types):
-        self._obstacles = obstacles # A list to add obstacle objects
-        self._types = types # Do we really need this? Implemented only the getter method.
+    def __init__(self, types, obstacle=None):
+        self._types = types
+        self._obstacle = obstacle # A list to store the information about the detected obstacle
 
     @abstractmethod
     def detect(self):
@@ -121,17 +141,7 @@ class Sensor(ABC):
 
     @property
     @abstractmethod
-    def obstacles(self):
-        raise NotImplementedError
-
-    @obstacles.setter
-    @abstractmethod
-    def obstacles(self, value):
-        raise NotImplementedError
-
-    @property
-    @abstractmethod
-    def types(self):
+    def obstacle(self):
         raise NotImplementedError
 
 class Comms_Module(ABC):
@@ -153,9 +163,9 @@ class Obstacles(ABC):
     def type(self):
         raise NotImplementedError
 
-    @type.setter
+    @property
     @abstractmethod
-    def type(self):
+    def lane(self):
         raise NotImplementedError
 
 class System_User(ABC):
@@ -171,34 +181,8 @@ class System_User(ABC):
 
     @property
     @abstractmethod
-    def name(self):
-        raise NotImplementedError
-
-    @name.setter
-    @abstractmethod
-    def name(self, value):
-        raise NotImplementedError
-
-    @property
-    @abstractmethod
-    def surname(self):
-        raise NotImplementedError
-
-    @surname.setter
-    @abstractmethod
-    def surname(self, value):
-        raise NotImplementedError
-
-    @property
-    @abstractmethod
     def username(self):
         raise NotImplementedError
-
-    @username.setter
-    @abstractmethod
-    def username(self, value):
-        raise NotImplementedError
-
 
 class Sign_Recognition_System(ABC):
     def __init__(self, sign_data):
@@ -283,30 +267,23 @@ class Car(Vehicle):
 
 
 class Control_Unit(SO_Control_Unit):
-    def __init__(self, users=None, obstacles=None, status=False, log=None, user_db=None):
-        self._users = {'admin'}
-        self._obstacles = obstacles
+    def __init__(self, users, obstacles=None, status=False, log=None):
+        self._users = users
+        self._obstacles = []
         self._status = status
         self._log = log
-        self._user_db = user_db # A list to store user objects
 
-    def add_user(self, user_db=None):
-        new_user= []
-        new_user[0] = input("Please enter the name of the user: ")
-        new_user[1] = input("Please enter the surname of the user: ")
-        new_user[2] = input("Please enter the username of the user: ")
-        if new_user[2] in users:
+    def add_user(self):
+        new_user = (input("Please enter the username of the user: "))
+        if new_user in self._users:
             print("The username already exists! Returning to the main menu.")
             sleep(2)
             main_menu()
         else:
-            self.users.add(new_user[2]) # Adding username to the user database
-            # Creating a new object and storing it to the users dictionary. Key is the username.
-            user_db[new_user[2]] = User(new_user[0], new_user[1], new_user[2])
+            self._users.add(new_user) # Adding username to the user database
             print("The user has been added! Returning to the main menu.")
             sleep(2)
             main_menu()
-
 
     def auth(self, user):
         # Authenticates user
@@ -349,10 +326,19 @@ class Control_Unit(SO_Control_Unit):
         return self._users
 
     @users.setter
-    def users (self, value):
+    def users(self, value):
         self._users.add(value)
 
-class User:
+    @property
+    def obstacles(self):
+        return self._obstacles
+
+    @obstacles.setter
+    def obstacles(self, value):
+        self._obstacles = value
+
+class User(System_User):
+
     def __init__(self, name, surname, username):
         self._name = name
         self._surname = surname
@@ -364,19 +350,71 @@ class User:
         else:
             Control_Unit.status = True
 
-    def register(self):
-        register
+    # Only a getter for username is added because no other attributes will be called for and be amended in the program.
+    @property
+    def username(self):
+        return self._username
 
+class Lidar(Sensor):
+    def __init__(self, types=None, obstacle=None):
+        self._types = {1: 'rock', 2: 'pedestrian', 3: 'animal', 4: 'trash', 5: 'traffic cone'} # Obstacle type database
+        self._obstacle = []
+
+    def detect(self):
+        """Detects the traffic sign."""
+        type_code = int(input(""" Please select an obstacle to place on the road:
+         1. Rock
+         2. Pedestrian
+         3. Animal
+         4. Trash
+         5. Traffic cone
+
+         Your selection [1-5]: """))
+
+        lane = int(input(""" Please select a lane to place the obstacle.
+        Your selection [1-3]: """))
+
+        # The LiDAR interprets the sign detected (e.g. the code entered by the user) by using obstacle type database.
+        for x in self._types.keys():
+            if type_code == x:
+                type = self._types.get(x)
+
+        # Updating the obstacle data according to the outcome of the detection
+        self._obstacle = (type, lane)
+        self.send_data() # To send the data to the control unit for processing.
+        print(f"The obstacle has been placed on lane {lane}. Please see car log for car's reaction.")
+
+        # Returns to the main menu
+        main_menu()
+
+    def send_data(self):
+        """Sends the data to the control unit"""
+        control_unit.obstacles = self._obstacle
+
+    # Only obstacle getter method is written, because the values are set by the detect() method.
+    @property
+    def obstacle(self):
+        return self._obstacle
+
+
+class Obstacle(Obstacles):
+    def __init__(self, type, lane):
+        self._type = type
+        self._lane = lane # Refers to the lane on the road where the obstacle is located
+
+    @property
+    def type(self):
+        return self._type
+
+    @property
+    def lane(self):
+        return self._lane
 
 # Creating objects
-
-control_unit = Control_Unit()
-user = User('John', 'Doe', 'admin')
-control_unit.users.add(user)
+admin = User('John', 'Doe', 'admin')
+control_unit = Control_Unit({'admin'})
 car = Car('Car', 'N', 1)
-
-
-
+lidar = Lidar()
 
 
 # User menu
@@ -475,7 +513,7 @@ def interact_menu():
         """)
     print(97 * "=")
 
-    choice = int(input("Please make your choice [1-5] : "))
+    choice = int(input("Please make your choice [1-11] : "))
     while True:
         if choice == 1:
             pass # Start the car
@@ -484,7 +522,7 @@ def interact_menu():
         elif choice == 3:
             pass # Brake
         elif choice == 4:
-            pass  # Place an obstacle
+            lidar.detect()
         elif choice == 5:
             pass  # Put a traffic sign
         elif choice == 6:
@@ -492,7 +530,7 @@ def interact_menu():
         elif choice == 7:
             pass  # Stop the car
         elif choice == 8:
-            pass  # Add a user
+            control_unit.add_user()
         elif choice == 9:
             pass  # Delete a user
         elif choice == 10:
@@ -506,6 +544,4 @@ def interact_menu():
             sleep(2)
             inf_menu()
 
-# user_login()
-
-print(control_unit.users)
+user_login()

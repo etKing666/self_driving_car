@@ -54,13 +54,13 @@ class SO_Control_Unit(ABC):
     def status(self):
         raise NotImplementedError
 
-    @state.setter
+    @status.setter
     @abstractmethod
     def status(self):
         raise NotImplementedError
 
 class Smart_Vehicle(ABC):
-    def __init__(self, type, velocity, direction, lane):
+    def __init__(self, type, direction, lane, velocity=0):
         self._type = type
         self._velocity = velocity
         self._direction = direction
@@ -240,7 +240,7 @@ class Sign_DB(ABC):
 
 # Creating classes:
 
-class Vehicle(SmartVehicle):
+class Vehicle(Smart_Vehicle):
 
     @property
     def type(self):
@@ -284,25 +284,25 @@ class Car(Vehicle):
 
 class Control_Unit(SO_Control_Unit):
     def __init__(self, users=None, obstacles=None, status=False, log=None, user_db=None):
-        self._users = users # A set that stores the usernames for easier membership test
+        self._users = {'admin'}
         self._obstacles = obstacles
         self._status = status
         self._log = log
         self._user_db = user_db # A list to store user objects
 
-    def add_user(self):
+    def add_user(self, user_db=None):
         new_user= []
         new_user[0] = input("Please enter the name of the user: ")
         new_user[1] = input("Please enter the surname of the user: ")
         new_user[2] = input("Please enter the username of the user: ")
-        if new_user[2] in users{}:
+        if new_user[2] in users:
             print("The username already exists! Returning to the main menu.")
             sleep(2)
             main_menu()
         else:
             self.users.add(new_user[2]) # Adding username to the user database
             # Creating a new object and storing it to the users dictionary. Key is the username.
-            users[new_user[2]] = User(new_user[0], new_user[1], new_user[2])
+            user_db[new_user[2]] = User(new_user[0], new_user[1], new_user[2])
             print("The user has been added! Returning to the main menu.")
             sleep(2)
             main_menu()
@@ -340,11 +340,19 @@ class Control_Unit(SO_Control_Unit):
     def status(self):
         return self._status
 
-    @state.setter
+    @status.setter
     def status(self, value):
         self._status = value
 
-class User(System_User):
+    @property
+    def users(self):
+        return self._users
+
+    @users.setter
+    def users (self, value):
+        self._users.add(value)
+
+class User:
     def __init__(self, name, surname, username):
         self._name = name
         self._surname = surname
@@ -356,22 +364,18 @@ class User(System_User):
         else:
             Control_Unit.status = True
 
-    @surname.setter
-    def surname(self, value):
-        self._surname = value
+    def register(self):
+        register
 
-    @property
-    def username(self):
-        return self._username
-
-    @username.setter
-    def username(self, value):
-        self._username = value
 
 # Creating objects
 
 control_unit = Control_Unit()
-car = Car()
+user = User('John', 'Doe', 'admin')
+control_unit.users.add(user)
+car = Car('Car', 'N', 1)
+
+
 
 
 
@@ -382,11 +386,18 @@ def user_login():
     print("""
         Please enter your username to log in to the system.
         """)
-    username = int(input("Username : "))
-    Print("")
+    print("")
     print(97 * "=")
+    username = input("Username : ")
 
-    if
+    if username in control_unit.users:
+        print("You are authorized to use the system!")
+        sleep(2)
+        main_menu()
+    else:
+        print("You are not authorized to use the system!")
+        sleep(2)
+        exit()
 
 def main_menu():
     print(30 * "=", "SMART CAR INFORMATION SYSTEM (SCIS)", 30 * "=")
@@ -495,4 +506,6 @@ def interact_menu():
             sleep(2)
             inf_menu()
 
-main_menu()
+# user_login()
+
+print(control_unit.users)

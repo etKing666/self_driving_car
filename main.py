@@ -490,7 +490,7 @@ class V2V_Comms(Comms_Module):
             if type_code == x:
                 car_type = self._types.get(x)
 
-        """WE WILL CONTINUE FROM HERE!!!"""
+        """WE WILL CONTINUE FROM HERE!"""
         # Updating the obstacle data according to the outcome of the detection
         self._vehicles.append() = (Obstacle(type, lane))
         self.send_data()  # To send the data to the control unit for processing.

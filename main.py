@@ -145,6 +145,10 @@ class Sensor(ABC):
         raise NotImplementedError
 
 class Comms_Module(ABC):
+    def __init__(self, veh_types=None, vehicles=None):
+        veh_types = {}
+        vehicles = []
+
     @abstractmethod
     def get_data(self):
         raise NotImplementedError
@@ -225,6 +229,52 @@ class Sign_DB(ABC):
 # Creating classes:
 
 class Vehicle(Smart_Vehicle):
+    def __init__(self, type, direction, lane, velocity=0):
+        self._type = type
+        self._velocity = velocity
+        self._direction = direction
+        self._lane = lane
+
+        @property
+        @abstractmethod
+        def type(self):
+            raise NotImplementedError
+
+        @type.setter
+        @abstractmethod
+        def type(self, value):
+            raise NotImplementedError
+
+        @property
+        @abstractmethod
+        def velocity(self):
+            raise NotImplementedError
+
+        @velocity.setter
+        @abstractmethod
+        def velocity(self, value):
+            raise NotImplementedError
+
+        @property
+        @abstractmethod
+        def direction(self):
+            raise NotImplementedError
+
+        @direction.setter
+        @abstractmethod
+        def direction(self, value):
+            raise NotImplementedError
+
+        @property
+        @abstractmethod
+        def lane(self):
+            raise NotImplementedError
+
+        @lane.setter
+        @abstractmethod
+        def lane(self, value):
+            raise NotImplementedError
+
 
     @property
     def type(self):
@@ -380,16 +430,15 @@ class Lidar(Sensor):
                 type = self._types.get(x)
 
         # Updating the obstacle data according to the outcome of the detection
-        self._obstacle = (type, lane)
+        self._obstacle = (Obstacle(type, lane))
         self.send_data() # To send the data to the control unit for processing.
         print(f"The obstacle has been placed on lane {lane}. Please see car log for car's reaction.")
-
         # Returns to the main menu
         main_menu()
 
     def send_data(self):
         """Sends the data to the control unit"""
-        control_unit.obstacles = self._obstacle
+        Control_Unit.obstacles = self._obstacle
 
     # Only obstacle getter method is written, because the values are set by the detect() method.
     @property
@@ -408,6 +457,51 @@ class Obstacle(Obstacles):
     @property
     def lane(self):
         return self._lane
+
+class V2V_Comms(Comms_Module):
+    def __init__(self, veh_types=None, vehicles=None):
+        _veh_types = {1: 'Car', 2: 'Van', 3: 'SUV', 4: 'Truck', 5: 'Trailer'}
+        _vehicles = []
+
+    def get_data(self):
+        """Intercepts incoming communication from nearby vehicles."""
+        type_code = int(input(""" Please select a vehicle type to instantiate:
+                 1. Car
+                 2. Van
+                 3. SUV
+                 4. Truck
+                 5. Trailer
+
+                 Your selection [1-4]: """))
+
+        velocity = int(input(""" Please select enter the velocity of the vehicle.
+                       Your selection [max. 180]: """))
+
+        # There are only to valid directions in the program: North and South
+        direction = input(""" Please select the direction the vehicle is moving.
+                        Your selection [N or S]: """)
+        """VALIDATE USER INPUT WITH ASSERT OR TRY OR IF/ELSE"""
+
+        lane = int(input(""" Please select a lane the vehicle is on.
+                       Your selection [1-3]: """))
+
+        # V2V Comms module interprets the vehicle code it receives to identify yhe type of the vehicle:
+        for x in self._veh_types.keys():
+            if type_code == x:
+                car_type = self._types.get(x)
+
+        """WE WILL CONTINUE FROM HERE!!!"""
+        # Updating the obstacle data according to the outcome of the detection
+        self._vehicles.append() = (Obstacle(type, lane))
+        self.send_data()  # To send the data to the control unit for processing.
+        print(f"The obstacle has been placed on lane {lane}. Please see car log for car's reaction.")
+        # Returns to the main menu
+        main_menu()
+
+
+    def update_db(self):
+        raise NotImplementedError
+
 
 # Creating objects
 admin = User('John', 'Doe', 'admin')

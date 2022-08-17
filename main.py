@@ -7,11 +7,12 @@ from sys import exit
 class SO_Control_Unit(ABC):
     """Control unit stores all the critical information and manages the car."""
 
-    def __init__(self, users, obstacles, log, status=False):
+    def __init__(self, users, obstacles, log, status=False, car_info):
         self._users = users
         self._obstacles = obstacles
         self._log = log
         self._status = status
+        self._car_info = car_info
 
     @abstractmethod
     def auth(self, user):
@@ -77,6 +78,21 @@ class SO_Control_Unit(ABC):
     @obstacles.setter
     @abstractmethod
     def obstacles(self, value):
+        raise NotImplementedError
+
+    @property
+    @abstractmethod
+    def car_info(self):
+        raise NotImplementedError
+
+    @car_info.setter
+    @abstractmethod
+    def car_info(self, value):
+        raise NotImplementedError
+
+    @car_info.deleter
+    @abstractmethod
+    def car_info(self):
         raise NotImplementedError
 
 class Smart_Vehicle(ABC):
@@ -235,47 +251,6 @@ class Vehicle(Smart_Vehicle):
         self._direction = direction
         self._lane = lane
 
-        @property
-        @abstractmethod
-        def type(self):
-            raise NotImplementedError
-
-        @type.setter
-        @abstractmethod
-        def type(self, value):
-            raise NotImplementedError
-
-        @property
-        @abstractmethod
-        def velocity(self):
-            raise NotImplementedError
-
-        @velocity.setter
-        @abstractmethod
-        def velocity(self, value):
-            raise NotImplementedError
-
-        @property
-        @abstractmethod
-        def direction(self):
-            raise NotImplementedError
-
-        @direction.setter
-        @abstractmethod
-        def direction(self, value):
-            raise NotImplementedError
-
-        @property
-        @abstractmethod
-        def lane(self):
-            raise NotImplementedError
-
-        @lane.setter
-        @abstractmethod
-        def lane(self, value):
-            raise NotImplementedError
-
-
     @property
     def type(self):
         return self.type
@@ -317,11 +292,12 @@ class Car(Vehicle):
 
 
 class Control_Unit(SO_Control_Unit):
-    def __init__(self, users, obstacles=None, status=False, log=None):
+    def __init__(self, users, obstacles=None, status=False, log=None, car_info=None):
         self._users = users
         self._obstacles = []
         self._status = status
         self._log = log
+        self._car_info = []
 
     def add_user(self):
         new_user = (input("Please enter the username of the user: "))
@@ -355,8 +331,32 @@ class Control_Unit(SO_Control_Unit):
         #Evaluates traffic signs detected
         raise NotImplementedError
 
-    def eval_veh(self):
-        #Evaluates other vehicles detected
+    def eval_veh(self, type, direction, lane, velocity):
+        # Compares the car's information against the vehicle detected
+        if self._car_info[1] != direction: # Compares the direction
+            if self._car_info[2] == 1:
+                self._car_info[2] == 2
+                car.lane == 2
+                print("The car changed its lane from 1 to 2.")
+            elif self._car_info[2] == 2:
+                if self._car_info[3] < 80: # If the velocity is less than 80, car changes its lane to the slowest one.
+                    self._car_info[2] == 1
+                    car.lane == 1
+                    print("The car changed its lane from 2 to 1.")
+                self._car_info[2] == 3
+                car.lane == 3
+                print("The car changed its lane from 2 to 3.")
+            else:
+                self._car_info[2] == 2
+                car.lane == 2
+                print("The car changed its lane from 3 to 2.")
+        else:
+            print("A car coming from opposite direction is detected. Since it is on a different lane, car did not change "
+                  "its lane and continued the trip.")
+
+
+        """ BURADA KALDIK. CAR INFO'YU GERİ NASIL GÜNCELLEYECEĞİZ? BELKİ DE BURADAN DOĞRUDAN NESNEYİ DEĞİŞTİRİZ
+        GETTER VE SETTER METHODLARI VAR SONUÇTA."""
         raise NotImplementedError
 
     def eval_obs(self):
@@ -386,6 +386,18 @@ class Control_Unit(SO_Control_Unit):
     @obstacles.setter
     def obstacles(self, value):
         self._obstacles = value
+
+    @property
+    def car_info(self):
+        return self._car_info
+
+    @car_info.setter
+    def car_info(self, value):
+        self._car_info.append(value)
+
+    @car_info.deleter
+    def car_info(self):
+        del self._car_info
 
 class User(System_User):
 
@@ -474,41 +486,67 @@ class V2V_Comms(Comms_Module):
 
                  Your selection [1-4]: """))
 
-        velocity = int(input(""" Please select enter the velocity of the vehicle.
-                       Your selection [max. 180]: """))
+        while True:
+            velocity = int(input(""" Please enter the velocity of the vehicle.
+                       Enter value [max. 180]: """))
+            if velocity <= 180:
+                break
+            else:
+                print("Please enter a valid value [max. 180]")
 
         # There are only to valid directions in the program: North and South
-        direction = input(""" Please select the direction the vehicle is moving.
+        while True:
+            direction = input(""" Please select the direction the vehicle is moving.
                         Your selection [N or S]: """)
-        """VALIDATE USER INPUT WITH ASSERT OR TRY OR IF/ELSE"""
+            if lane == "N" or lane == "S":
+                break
+            else:
+                print("Please make a valid choice [N or S]")
 
-        lane = int(input(""" Please select a lane the vehicle is on.
+        while True:
+            lane = int(input(""" Please select a lane the vehicle is on.
                        Your selection [1-3]: """))
+            if lane == 1 or lane == 2 or lane == 3:
+                break
+            else:
+                print("Please make a valid choice [1-3]")
 
         # V2V Comms module interprets the vehicle code it receives to identify yhe type of the vehicle:
         for x in self._veh_types.keys():
             if type_code == x:
                 car_type = self._types.get(x)
 
-        """WE WILL CONTINUE FROM HERE!"""
         # Updating the obstacle data according to the outcome of the detection
-        self._vehicles.append() = (Obstacle(type, lane))
-        self.send_data()  # To send the data to the control unit for processing.
+        self.update_db(car_type, direction, lane, velocity)
+        self.send_data(car_type, direction, lane, velocity)
         print(f"The obstacle has been placed on lane {lane}. Please see car log for car's reaction.")
         # Returns to the main menu
         main_menu()
 
 
-    def update_db(self):
-        raise NotImplementedError
+    def update_db(self, typ, dir, ln, vel):
+        self._vehicles.append() = (Vehicle(typ, dir, ln, vel))
 
+    def send_data(self, typ, dir, ln, vel):
+        Control_Unit.eval_veh(typ, dir, ln, vel)
+
+
+# Helper functions
+
+def update_car_info(car):
+    # Updates car information in the control unit
+    del control_unit.car_info
+    control_unit.car_info = car.type
+    control_unit.car_info = car._direction
+    control_unit.car_info = car._lane
+    control_unit.car_info = car._velocity
 
 # Creating objects
 admin = User('John', 'Doe', 'admin')
 control_unit = Control_Unit({'admin'})
 car = Car('Car', 'N', 1)
+update_car_info(car)
 lidar = Lidar()
-
 
 # User menu
 

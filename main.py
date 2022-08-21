@@ -2,7 +2,8 @@ from abc import ABC, abstractmethod
 from time import sleep
 from sys import exit
 
-#Defining interfaces:
+
+# Defining interfaces:
 
 class SO_Control_Unit(ABC):
     """Control unit stores all the critical information and manages the car."""
@@ -27,7 +28,7 @@ class SO_Control_Unit(ABC):
     @abstractmethod
     def auth(self, user):
         # Authenticates user
-        raise NotImplementedError #Since it is more descriptive, we raise NotImplementedError instead of "pass"
+        raise NotImplementedError  # Since it is more descriptive, we raise NotImplementedError instead of "pass"
 
     @abstractmethod
     def start_car(self):
@@ -47,17 +48,17 @@ class SO_Control_Unit(ABC):
 
     @abstractmethod
     def eval_sign(self):
-        #Evaluates traffic signs detected
+        # Evaluates traffic signs detected
         raise NotImplementedError
 
     @abstractmethod
     def eval_veh(self):
-        #Evaluates other vehicles detected
+        # Evaluates other vehicles detected
         raise NotImplementedError
 
     @abstractmethod
     def eval_obs(self):
-        #Evaluates obstacles detected
+        # Evaluates obstacles detected
         raise NotImplementedError
 
     @property
@@ -103,6 +104,7 @@ class SO_Control_Unit(ABC):
     @abstractmethod
     def car_info(self):
         raise NotImplementedError
+
 
 class Smart_Vehicle(ABC):
     def __init__(self, type, direction, lane, velocity=0):
@@ -151,10 +153,11 @@ class Smart_Vehicle(ABC):
         def lane(self, value):
             raise NotImplementedError
 
+
 class Sensor(ABC):
     def __init__(self, types, obstacle=None):
         self._types = types
-        self._obstacle = obstacle # A list to store the information about the detected obstacle
+        self._obstacle = obstacle  # A list to store the information about the detected obstacle
 
     @abstractmethod
     def detect(self):
@@ -168,6 +171,7 @@ class Sensor(ABC):
     @abstractmethod
     def obstacle(self):
         raise NotImplementedError
+
 
 class Comms_Module(ABC):
     def __init__(self, veh_types=None, vehicles=None):
@@ -183,13 +187,14 @@ class Comms_Module(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def send_data(self,):
+    def send_data(self, ):
         raise NotImplementedError
+
 
 class Obstacles(ABC):
     def __init__(self, type, lane):
         self._type = type
-        self._lane = lane # Refers to the lane on the road where the obstacle is located
+        self._lane = lane  # Refers to the lane on the road where the obstacle is located
 
     @property
     @abstractmethod
@@ -200,6 +205,7 @@ class Obstacles(ABC):
     @abstractmethod
     def lane(self):
         raise NotImplementedError
+
 
 class System_User(ABC):
     def __init__(self, name, surname, username):
@@ -217,6 +223,7 @@ class System_User(ABC):
     def username(self):
         raise NotImplementedError
 
+
 class Sign_Recognition_System(ABC):
     def __init__(self, sign_data):
         self._sign_data = sign_data
@@ -232,6 +239,7 @@ class Sign_Recognition_System(ABC):
     @abstractmethod
     def send_data(self):
         raise NotImplementedError
+
 
 class T_Sign(ABC):
     def __init__(self, type):
@@ -257,17 +265,13 @@ class T_Sign(ABC):
     def desc(self, value):
         raise NotImplementedError
 
+
 class Sign_DB(ABC):
     def __init__(self, signs):
         self.signs = signs
 
     @abstractmethod
     def check_sign(self):
-        raise NotImplementedError
-
-    @property
-    @abstractmethod
-    def list_signs(self):
         raise NotImplementedError
 
 # Creating classes:
@@ -311,6 +315,7 @@ class Vehicle(Smart_Vehicle):
     def lane(self, value):
         self._lane = value
 
+
 class Car(Vehicle):
     def print_state(self):
         print(f"Car type: {self.type}")
@@ -332,7 +337,7 @@ class Control_Unit(SO_Control_Unit):
         if new_user in self._users:
             print("The username already exists! Returning to the main menu.")
         else:
-            self._users.add(new_user) # Adding username to the user database
+            self._users.add(new_user)  # Adding username to the user database
             print("The user has been added! Returning to the main menu.")
 
     def delete_user(self):
@@ -345,22 +350,22 @@ class Control_Unit(SO_Control_Unit):
 
     def auth(self, login):
         if login in control_unit.users:
-            print("You are authorized to use the system!")
+            print("You are authorized to use the system!\n")
             sleep(2)
             main_menu()
         else:
-            print("You are not authorized to use the system!")
+            print("You are not authorized to use the system!\n")
             sleep(2)
             exit()
 
     def start_car(self, vehicle):
         if self.status:
-            print ("\nThe car has already been started. It is not possible to start it again.\n")
+            print("\nThe car has already been started. It is not possible to start it again.\n")
             sleep(2)
         else:
             self.status = True
             vehicle.velocity = 50
-            print ("\nThe car has been started. The car's speed is set to 50 km/h.\n")
+            print("\nThe car has been started. The car's speed is set to 50 km/h.\n")
             sleep(2)
         interact_menu()
 
@@ -391,9 +396,8 @@ class Control_Unit(SO_Control_Unit):
                 vehicle.velocity = 0
                 print("\nThe car has been stopped.\n")
 
-    def eval_sign(self):
-        #Evaluates traffic signs detected
-        raise NotImplementedError
+    def eval_sign(self, sign):
+        pass
 
     def eval_veh(self, veh):
         # Compares the car's information against the vehicle detected
@@ -417,7 +421,8 @@ class Control_Unit(SO_Control_Unit):
         else:
             if veh.lane == car.lane:
                 if veh.velocity <= car.velocity:
-                    print("\nThe car is so slow to pose a threat.\n")  # It is on the same lane, but slower than our car.
+                    print(
+                        "\nThe car is so slow to pose a threat.\n")  # It is on the same lane, but slower than our car.
                 else:
                     if car.lane == 1:
                         print("\nThe car is already on the slowest lane. So, no actions are taken.\n")
@@ -434,7 +439,7 @@ class Control_Unit(SO_Control_Unit):
                 car.lane = 2
                 print("\nThe car changed its lane from 1 to 2.\n")
             elif car.lane == 2:
-                if car.velocity < 80: # If the velocity is less than 80, car changes its lane to the slowest one.
+                if car.velocity < 80:  # If the velocity is less than 80, car changes its lane to the slowest one.
                     car.lane = 1
                     print("\nThe car changed its lane from 2 to 1.\n")
                 else:
@@ -478,6 +483,7 @@ class Control_Unit(SO_Control_Unit):
     def car_info(self):
         del self._car_info
 
+
 class User(System_User):
 
     def __init__(self, name, surname, username):
@@ -497,24 +503,25 @@ class User(System_User):
     def username(self):
         return self._username
 
+
 class Lidar(Sensor):
     def __init__(self, types=None, obstacle=None):
-        self._types = {1: 'rock', 2: 'pedestrian', 3: 'animal', 4: 'trash', 5: 'traffic cone'} # Obstacle type database
+        self._types = {1: 'rock', 2: 'pedestrian', 3: 'animal', 4: 'trash', 5: 'traffic cone'}  # Obstacle type database
         self._obstacle = []
 
     def detect(self):
         """Detects the traffic sign."""
-        type_code = int(input(""" Please select an obstacle to place on the road:
-         1. Rock
-         2. Pedestrian
-         3. Animal
-         4. Trash
-         5. Traffic cone
+        type_code = int(input("""\nPlease select an obstacle to place on the road:
+1. Rock
+2. Pedestrian
+3. Animal
+4. Trash
+5. Traffic cone
 
-         Your selection [1-5]: """))
+Your selection [1-5]: """))
 
-        lane = int(input(""" Please select a lane to place the obstacle.
-        Your selection [1-3]: """))
+        lane = int(input("""\nPlease select a lane to place the obstacle.
+Your selection [1-3]: """))
 
         # The LiDAR interprets the sign detected (e.g. the code entered by the user) by using obstacle type database.
         for x in self._types.keys():
@@ -524,7 +531,7 @@ class Lidar(Sensor):
         # Updating the obstacle data according to the outcome of the detection
         obs = Obstacle(type, lane)
         self._obstacle = (obs)
-        self.send_data(obs) # To send the data to the control unit for processing.
+        self.send_data(obs)  # To send the data to the control unit for processing.
 
     def send_data(self, obs):
         """Sends the data to the control unit"""
@@ -535,10 +542,11 @@ class Lidar(Sensor):
     def obstacle(self):
         return self._obstacle
 
+
 class Obstacle(Obstacles):
     def __init__(self, type, lane):
         self._type = type
-        self._lane = lane # Refers to the lane on the road where the obstacle is located
+        self._lane = lane  # Refers to the lane on the road where the obstacle is located
 
     @property
     def type(self):
@@ -548,6 +556,8 @@ class Obstacle(Obstacles):
     def lane(self):
         return self._lane
 
+
+# noinspection PyUnreachableCode
 class V2V_Comms(Comms_Module):
     def __init__(self, veh_types=None, vehicles=None):
         self._veh_types = {1: 'Car', 2: 'Van', 3: 'SUV', 4: 'Truck', 5: 'Trailer'}
@@ -555,39 +565,76 @@ class V2V_Comms(Comms_Module):
 
     def get_data(self):
         """Intercepts incoming communication from nearby vehicles."""
-        type_code = int(input(""" Please select a vehicle type to instantiate:
-                 1. Car
-                 2. Van
-                 3. SUV
-                 4. Truck
-                 5. Trailer
-
-                 Your selection [1-4]: """))
+        while True:
+            try:
+                type_code = int(input("""\nPlease select a vehicle type to instantiate:
+1. Car
+2. Van
+3. SUV
+4. Truck
+5. Trailer
+    
+Your selection [1-5]: """))
+                if type_code < 1 or type_code > 5:
+                    print("\nInvalid input.\n")
+                    sleep(1)
+                    continue
+            except ValueError:
+                print("\nPlease enter an integer.\n")
+                sleep(1)
+                continue
+            else:
+                break
 
         while True:
-            velocity = int(input(""" Please enter the velocity of the vehicle.
-                       Enter value [max. 180]: """))
-            if velocity <= 180:
-                break
+            try:
+                velocity = int(input("""\nPlease enter the velocity of the vehicle.
+Enter value [max. 180]: """))
+                if velocity >= 180:
+                    print("\nYou are way too fast! Max. permitted speed for the car is 180.\n")
+                    sleep(1)
+                    continue
+                elif velocity < 0:
+                    print("\nSpeed cannot be negative. Please enter a positive integer.\n")
+                    sleep(1)
+                    continue
+            except ValueError:
+                print("\nPlease enter an integer.\n")
+                sleep(1)
+                continue
             else:
-                print("Please enter a valid value [max. 180]")
+                break
 
         # There are only to valid directions in the program: North and South
         while True:
-            direction = input(""" Please select the direction the vehicle is moving.
-                        Your selection [N or S]: """)
-            if direction == "N" or direction == "S":
-                break
+            try:
+                direction = input("""\n Please select the direction the vehicle is moving.
+Your selection [N or S]: """)
+                direction = direction.upper()  # In order to accept valid lowercase inputs.
+                if direction != "N" and direction != "S":
+                    print("\nPlease make a valid choice [N or S].\n")
+                    sleep(1)
+                    continue
+            except:
+                print("\nInvalid input. Please make a valid choice [N or S]\n")
+                continue
             else:
-                print("Please make a valid choice [N or S]")
+                break
 
         while True:
-            lane = int(input(""" Please select a lane the vehicle is on.
-                       Your selection [1-3]: """))
-            if lane == 1 or lane == 2 or lane == 3:
-                break
+            try:
+                lane = int(input("""\n Please select a lane the vehicle is on.
+                Your selection [1-3]: """))
+                if lane not in [1, 2, 3]:
+                    print("\nPlease make a valid choice [1-3]\n")
+                    sleep(1)
+                    continue
+            except:
+                print("\nInvalid input. Please make a valid choice [1-3]\n")
+                sleep(1)
+                continue
             else:
-                print("Please make a valid choice [1-3]")
+                break
 
         # V2V Comms module interprets the vehicle code it receives to identify yhe type of the vehicle:
         for x in self._veh_types.keys():
@@ -604,35 +651,41 @@ class V2V_Comms(Comms_Module):
         # Returns to the main menu
         main_menu()
 
-
     def update_db(self, veh):
-       self._vehicles.append(veh)
+        self._vehicles.append(veh)
 
     def send_data(self, veh):
         control_unit.eval_veh(veh)
 
+
 class TSRS(Sign_Recognition_System):
-    def __init__(self, sign_code=None):
+    def __init__(self, sign_code=None, sign=None):
         self._sign_code = sign_code
 
     def detect_sign(self):
         """Detects the traffic sign."""
-    self._sign_code = int(input(""" Please select an obstacle to place on the road:
-         1. Speed Limit (50 km/h)
-         2. Speed Limit (90 km/h)
-         3. Stop
-         4. Pedestrian Crosing
-         5. Minimum Speed Limit (60 km/h)
-         Your selection [1-5]: """))
+        try:
+            self._sign_code = int(input(""" Please select an obstacle to place on the road:
+             1. Speed Limit (50 km/h)
+             2. Speed Limit (90 km/h)
+             3. Stop
+             4. Pedestrian Crosing
+             5. Minimum Speed Limit (60 km/h)
+             Your selection [1-5]: """))
+            if self._sign_code < 1 or self._sign_code > 5:
+                raise ValueError("Invalid input")
+        except ValueError:
+            print("Please enter an integer.")
 
-    def check_db(self):
-        raise NotImplementedError
+    def check_db(self, code):
+        return sign_db.check_sign(code)
 
-    def send_data(self):
-        raise NotImplementedError
+    def send_data(self, sign_code, sign_desc):
+        traffic_sign = Traffic_Sign(sign_code, sign_desc)
+        control_unit.eval_sign(traffic_sign)
 
 class Traffic_Sign(T_Sign):
-    def __init__(self, type, desc):
+    def __init__(self, type=None, desc=None):
         self._type = type
         self._desc = desc
 
@@ -652,23 +705,22 @@ class Traffic_Sign(T_Sign):
     def desc(self, value):
         self._desc = value
 
+
 class TMA_DB(Sign_DB):
     def __init__(self, signs=None):
-        self._signs = {1: 'Speed Limit (50 km/h)', 2: 'Speed Limit (90 km/H)', 3: 'Stop', 4: 'Pedestrian Crosing', 5: 'Minimum Speed Limit (60 km/h)'}
+        self._signs = {1: 'Speed Limit (50 km/h)', 2: 'Speed Limit (90 km/H)', 3: 'Stop', 4: 'Pedestrian Crosing',
+                       5: 'Minimum Speed Limit (60 km/h)'}
 
-    def check_sign(self):
-        raise NotImplementedError
+    def check_sign(self, code):
+        return self._signs.get(code)
 
-    @property
-    def list_signs(self):
-        print("The traffic sigs in the TMA database at the moment:")
-        print(self._signs.items())
+    # Helper functions  DO WE REALLY NEED THEM??
 
-# Helper functions  DO WE REALLY NEED THEM??
-
-# def update_car_info(car):
+    # def update_car_info(car):
     # Updates car information in the control unit
     """Bunu da object'i göndererek yapalım"""
+
+
 #    del control_unit.car_info
 #    control_unit.car_info = car.type
 #    control_unit.car_info = car._direction
@@ -680,11 +732,11 @@ admin = User('John', 'Doe', 'admin')
 control_unit = Control_Unit({'admin'})
 car = Car('Car', 'N', 1)
 v2vcomms = V2V_Comms()
-#update_car_info(car)
+# update_car_info(car)
 lidar = Lidar()
 sign_db = TMA_DB()
-tra_sign = Traffic_Sign()
 sign_recog = TSRS()
+
 
 # User menu
 
@@ -696,7 +748,8 @@ def user_login():
     print("")
     print(97 * "=")
     username = input("Username : ")
-    control_unit.auth(username) # Control unit authenticates the user
+    control_unit.auth(username)  # Control unit authenticates the user
+
 
 def main_menu():
     print(30 * "=", "SMART CAR INFORMATION SYSTEM (SCIS)", 30 * "=")
@@ -706,21 +759,23 @@ def main_menu():
     3. Exit
     """)
     print(97 * "=")
-
-    choice = int(input("Please make your choice [1-3] : "))
     while True:
-        if choice == 1:
-            inf_menu()
-        elif choice == 2:
-            interact_menu()
-        elif choice == 3:
-            print("Thank you for using SCIS!")
-            sleep(2)
-            exit()
-        else:
-            print("You have entered an invalid choice. Please try again.")
-            sleep(2)
-            main_menu()
+        try:
+            choice = int(input("Please make your choice [1-3] : "))
+            if choice == 1:
+                inf_menu()
+            elif choice == 2:
+                interact_menu()
+            elif choice == 3:
+                print("Thank you for using SCIS!")
+                sleep(2)
+                exit()
+            else:
+                print("You have entered an invalid choice. Please try again.")
+                sleep(2)
+        except:
+            print("Invalid input. Please provide a valid input [1-3]")
+
 
 def inf_menu():
     print(30 * "=", "SMART CAR INFORMATION SYSTEM (SCIS)", 30 * "=")
@@ -735,27 +790,29 @@ def inf_menu():
         """)
     print(97 * "=")
 
-    choice = int(input("Please make your choice [1-5] : "))
     while True:
-        if choice == 1:
-            print("")
-            car.print_state()
-            sleep(2)
-            break
-        elif choice == 2:
-            pass
-        elif choice == 3:
-            pass
-        elif choice == 4:
-            main_menu()
-        elif choice == 5:
-            print("Thank you for using SCIS!")
-            sleep(2)
-            exit()
-        else:
-            print("You have entered an invalid choice. Please try again.")
-            sleep(2)
-            inf_menu()
+        try:
+            choice = int(input("Please make your choice [1-5] : "))
+            if choice == 1:
+                print("")
+                car.print_state()
+                sleep(2)
+                break
+            elif choice == 2:
+                pass
+            elif choice == 3:
+                pass
+            elif choice == 4:
+                main_menu()
+            elif choice == 5:
+                print("Thank you for using SCIS!")
+                sleep(2)
+                exit()
+            else:
+                print("You have entered an invalid choice. Please try again.")
+                sleep(2)
+        except:
+            print("Invalid input. Please provide a valid input [1-5]")
 
 
 def interact_menu():
@@ -776,52 +833,54 @@ def interact_menu():
         11. Exit the system
         """)
     print(97 * "=")
-
-    choice = int(input("Please make your choice [1-11] : "))
     while True:
-        if choice == 1:
-            control_unit.start_car(car)
-            sleep(2)
-            break
-        elif choice == 2:
-            control_unit.accelerate(car)
-            sleep(2)
-            break
-        elif choice == 3:
-            control_unit.brake(car)
-            sleep(2)
-            break
-        elif choice == 4:
-            print(car.lane)
-            lidar.detect()
-            sleep(2)
-            break
-        elif choice == 5:
-            pass  # Put a traffic sign
-        elif choice == 6:
-            v2vcomms.get_data()
-        elif choice == 7:
-            control_unit.stop(car)
-            sleep(2)
-            break
-        elif choice == 8:
-            control_unit.add_user()
-            sleep(2)
-            break
-        elif choice == 9:
-            control_unit.delete_user()
-            sleep(2)
-            break
-        elif choice == 10:
-            main_menu()
-        elif choice == 11:
-            print("Thank you for using SCIS!")
-            sleep(2)
-            exit()
-        else:
-            print("You have entered an invalid choice. Please try again.")
-            sleep(2)
-            inf_menu()
+        try:
+            choice = int(input("Please make your choice [1-11] : "))
+            if choice == 1:
+                control_unit.start_car(car)
+                sleep(2)
+                break
+            elif choice == 2:
+                control_unit.accelerate(car)
+                sleep(2)
+                break
+            elif choice == 3:
+                control_unit.brake(car)
+                sleep(2)
+                break
+            elif choice == 4:
+                lidar.detect()
+                sleep(2)
+                break
+            elif choice == 5:
+                code = sign_recog.detect_sign()
+                description = sign_recog.check_db(code)
+                sign_recog.send_data(code, description)
+            elif choice == 6:
+                v2vcomms.get_data()
+            elif choice == 7:
+                control_unit.stop(car)
+                sleep(2)
+                break
+            elif choice == 8:
+                control_unit.add_user()
+                sleep(2)
+                break
+            elif choice == 9:
+                control_unit.delete_user()
+                sleep(2)
+                break
+            elif choice == 10:
+                main_menu()
+            elif choice == 11:
+                print("Thank you for using SCIS!")
+                sleep(2)
+                exit()
+            else:
+                print("You have entered an invalid choice. Please try again.")
+                sleep(2)
+        except:
+                print("Invalid input. Please provide a valid input [1-11]")
+
 
 user_login()
-

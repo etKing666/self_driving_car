@@ -1,16 +1,8 @@
-class Car:
-    def __init__(self, status):
-        self.status = status
+signs = {1: 'Speed Limit (50 km/h)', 2: 'Speed Limit (90 km/H)', 3: 'Stop', 4: 'Pedestrian Crosing',
+                   5: 'Minimum Speed Limit (60 km/h)'}
 
-class User:
-    def change_status(self, Car):
-        Car.status = True
+def check_sign(code):
+    return signs.get(code)
 
-audi = Car(False)
-etkin = User()
-etkin.change_status(audi)
-print(audi.status)
-
-
-
-
+a = check_sign(2)
+print(a)

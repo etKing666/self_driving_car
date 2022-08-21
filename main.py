@@ -3,11 +3,6 @@ from time import sleep
 from sys import exit
 from datetime import datetime
 
-# Generic timestamp that would be used throughout the program
-
-#time_now = datetime.now()
-#timestamp = time_now.strftime("%d/%m/%Y %H:%M:%S")
-
 # Defining interfaces:
 
 class SO_Control_Unit(ABC):
@@ -21,18 +16,15 @@ class SO_Control_Unit(ABC):
 
     @abstractmethod
     def add_user(self):
-        # Add a user
         raise NotImplementedError
 
     @abstractmethod
     def delete_user(self):
-        # Delete a user
         raise NotImplementedError
 
     @abstractmethod
     def auth(self, user):
-        # Authenticates user
-        raise NotImplementedError  # Since it is more descriptive, we raise NotImplementedError instead of "pass"
+        raise NotImplementedError
 
     @abstractmethod
     def start_car(self):
@@ -292,6 +284,10 @@ class Sign_DB(ABC):
 # Creating classes:
 
 class Vehicle(Smart_Vehicle):
+    """
+    A vehicle superclass which is instantiated by vehicle objects and subclassed by the car class.
+    It only has four attributes and no methods other than getter/setter methods.
+    """
     def __init__(self, type, direction, lane, velocity=0):
         self._type = type
         self._velocity = velocity
@@ -332,6 +328,7 @@ class Vehicle(Smart_Vehicle):
 
 
 class Car(Vehicle):
+    """Subclasses the vehicle superclass and adds one method which allows for printing its state."""
     def print_state(self):
         print(f"Vehicle type: {self.type}")
         print(f"Velocity: {self.velocity}")
@@ -340,6 +337,10 @@ class Car(Vehicle):
 
 
 class Control_Unit(SO_Control_Unit):
+    """
+    Control unit is the central unit which controls all the interaction between the user and all the components
+    of the car.
+    """
     def __init__(self, users, obstacles=None, status=False, log=None):
         self._users = users
         self._obstacles = []
@@ -590,7 +591,6 @@ class Control_Unit(SO_Control_Unit):
 
     def read_log(self):
         print("\n", 30 * "=", "CAR LOG (starting from the most recent incident):", 30 * "=", "\n")
-        # print("\n ====== Car log (starting from the most recent incident): ===== \n")
         print("{:<84} {:<25}".format('INCIDENT', 'DATE AND TIME'))
         while len(self._log) > 0:
             temp = self._log.pop()
@@ -599,6 +599,7 @@ class Control_Unit(SO_Control_Unit):
 
 
 class User(System_User):
+    """A class which stores the system user information."""
     def __init__(self, name, surname, username):
         self._name = name
         self._surname = surname
@@ -614,6 +615,7 @@ class User(System_User):
 
 
 class Lidar(Sensor):
+    """The component which detects the obstacles and sends obstacle information to control unit for evaluation."""
     def __init__(self, types=None, obstacle=None):
         self._types = {1: 'Rock', 2: 'Pedestrian', 3: 'Animal', 4: 'Trash', 5: 'Traffic cone'}  # Obstacle type database
         self._obstacle = []
@@ -657,6 +659,7 @@ Your selection [1-3]: """))
 
 
 class Obstacle(Obstacles):
+    """A class which stores the information of each individual obstacle."""
     def __init__(self, type, lane, timestamp):
         self._type = type
         self._lane = lane
@@ -675,6 +678,10 @@ class Obstacle(Obstacles):
         return self._timestamp
 
 class V2V_Comms(Comms_Module):
+    """
+    The component which detects the other vehicles in the environment. It sends vehicle data to the Control Unit
+    for evaluation.
+    """
     def __init__(self, veh_types=None, vehicles=None):
         self._veh_types = {1: 'Car', 2: 'Van', 3: 'SUV', 4: 'Truck', 5: 'Trailer'}
         self._vehicles = []
@@ -752,7 +759,7 @@ Your selection [1-3]: """))
             else:
                 break
 
-        # V2V Comms module interprets the vehicle code it receives to identify yhe type of the vehicle:
+        # V2V Comms module interprets the vehicle code it receives to identify the type of the vehicle:
         for x in self._veh_types.keys():
             if type_code == x:
                 car_type = self._veh_types.get(x)
@@ -777,13 +784,12 @@ Your selection [1-3]: """))
     def send_data(self, veh):
         control_unit.eval_veh(veh)
 
-
 class TSRS(Sign_Recognition_System):
+    """The component which detects traffic signs and sends traffic sign data to the Control Unit for evaluation."""
     def __init__(self, sign_code=None, sign=None):
         self._sign_code = sign_code
 
     def detect_sign(self):
-        """Detects the traffic sign."""
         while True:
             try:
                 self._sign_code = int(input("""\nPlease select a traffic sign to put on the road:
@@ -815,6 +821,10 @@ class TSRS(Sign_Recognition_System):
         return self._sign_code
 
 class Traffic_Sign(T_Sign):
+    """
+    The class that is instantiated for each traffic sign and which stores the information for each traffic sign
+    detected. It only has attributes and setter/getter methods.
+    """
     def __init__(self, type=None, desc=None):
         self._type = type
         self._desc = desc
@@ -837,13 +847,13 @@ class Traffic_Sign(T_Sign):
 
 
 class TMA_DB(Sign_DB):
+    """A class to simulate the Traffic Management Authority database."""
     def __init__(self, signs=None):
         self._signs = {1: 'Speed Limit (50 km/h)', 2: 'Speed Limit (90 km/H)', 3: 'Stop', 4: 'Slippery Road',
                        5: 'Minimum Speed Limit (60 km/h)'}
 
     def check_sign(self, code):
         return self._signs.get(code)
-
 
 # Creating permanent objects
 admin = User('John', 'Doe', 'admin')
@@ -854,10 +864,10 @@ lidar = Lidar()
 sign_db = TMA_DB()
 sign_recog = TSRS()
 
-
 # User menu
 
 def user_login():
+    """User login menu. Prompts for username only."""
     print(25 * "=", "WELCOME TO SMART CAR INFORMATION SYSTEM (SCIS)", 24 * "=")
     print("""
         Please enter your username to log in to the system.
@@ -869,6 +879,8 @@ def user_login():
 
 
 def main_menu():
+    """Main menu on which the user lands upon successful login. It is also possible to change the user using this
+    menu."""
     while True:
         print(30 * "=", "SMART CAR INFORMATION SYSTEM (SCIS)", 30 * "=")
         print("""
@@ -898,6 +910,7 @@ def main_menu():
 
 
 def inf_menu():
+    """The Information Menu is where the user can access information about the car."""
     while True:
         print(30 * "=", "SMART CAR INFORMATION SYSTEM (SCIS)", 30 * "=")
         print("""
@@ -946,6 +959,7 @@ def inf_menu():
             sleep(1)
 
 def interact_menu():
+    """Interaction Menu is where user interacts with the car."""
     while True:
         print(30 * "=", "SMART CAR INFORMATION SYSTEM (SCIS)", 30 * "=")
         print("""

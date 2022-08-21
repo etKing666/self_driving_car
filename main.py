@@ -233,13 +233,28 @@ class Sign_Recognition_System(ABC):
     def send_data(self):
         raise NotImplementedError
 
-class Traffic_Sign(ABC):
+class T_Sign(ABC):
     def __init__(self, type):
         self._type = type
 
     @property
     @abstractmethod
     def type(self):
+        raise NotImplementedError
+
+    @type.setter
+    @abstractmethod
+    def type(self, value):
+        raise NotImplementedError
+
+    @property
+    @abstractmethod
+    def desc(self):
+        raise NotImplementedError
+
+    @desc.setter
+    @abstractmethod
+    def desc(self, value):
         raise NotImplementedError
 
 class Sign_DB(ABC):
@@ -596,17 +611,69 @@ class V2V_Comms(Comms_Module):
     def send_data(self, veh):
         control_unit.eval_veh(veh)
 
+class TSRS(Sign_Recognition_System):
+    def __init__(self, sign_code=None):
+        self._sign_code = sign_code
 
-# Helper functions
+    def detect_sign(self):
+        """Detects the traffic sign."""
+    self._sign_code = int(input(""" Please select an obstacle to place on the road:
+         1. Speed Limit (50 km/h)
+         2. Speed Limit (90 km/h)
+         3. Stop
+         4. Pedestrian Crosing
+         5. Minimum Speed Limit (60 km/h)
+         Your selection [1-5]: """))
 
-def update_car_info(car):
+    def check_db(self):
+        raise NotImplementedError
+
+    def send_data(self):
+        raise NotImplementedError
+
+class Traffic_Sign(T_Sign):
+    def __init__(self, type, desc):
+        self._type = type
+        self._desc = desc
+
+    @property
+    def type(self):
+        return self._type
+
+    @type.setter
+    def type(self, value):
+        self._type = value
+
+    @property
+    def desc(self):
+        return self.desc
+
+    @desc.setter
+    def desc(self, value):
+        self._desc = value
+
+class TMA_DB(Sign_DB):
+    def __init__(self, signs=None):
+        self._signs = {1: 'Speed Limit (50 km/h)', 2: 'Speed Limit (90 km/H)', 3: 'Stop', 4: 'Pedestrian Crosing', 5: 'Minimum Speed Limit (60 km/h)'}
+
+    def check_sign(self):
+        raise NotImplementedError
+
+    @property
+    def list_signs(self):
+        print("The traffic sigs in the TMA database at the moment:")
+        print(self._signs.items())
+
+# Helper functions  DO WE REALLY NEED THEM??
+
+# def update_car_info(car):
     # Updates car information in the control unit
     """Bunu da object'i göndererek yapalım"""
-    del control_unit.car_info
-    control_unit.car_info = car.type
-    control_unit.car_info = car._direction
-    control_unit.car_info = car._lane
-    control_unit.car_info = car._velocity
+#    del control_unit.car_info
+#    control_unit.car_info = car.type
+#    control_unit.car_info = car._direction
+#    control_unit.car_info = car._lane
+#    control_unit.car_info = car._velocity
 
 # Creating objects
 admin = User('John', 'Doe', 'admin')
@@ -615,6 +682,9 @@ car = Car('Car', 'N', 1)
 v2vcomms = V2V_Comms()
 #update_car_info(car)
 lidar = Lidar()
+sign_db = TMA_DB()
+tra_sign = Traffic_Sign()
+sign_recog = TSRS()
 
 # User menu
 

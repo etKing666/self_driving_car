@@ -193,9 +193,10 @@ class Comms_Module(ABC):
 
 
 class Obstacles(ABC):
-    def __init__(self, type, lane):
-        self._type = type
+    def __init__(self, type, lane, timestamp):
+        self._type = type  # Type of obstacle as evaluated by Lidar
         self._lane = lane  # Refers to the lane on the road where the obstacle is located
+        self._timestamp = timestamp  # Date and time of detection
 
     @property
     @abstractmethod
@@ -205,6 +206,11 @@ class Obstacles(ABC):
     @property
     @abstractmethod
     def lane(self):
+        raise NotImplementedError
+
+    @property
+    @abstractmethod
+    def timestamp(self):
         raise NotImplementedError
 
 
@@ -355,7 +361,7 @@ class Control_Unit(SO_Control_Unit):
     def auth(self, login):
         if login in control_unit.users:
             print("You are authorized to use the system!\n")
-            self.update_log(f"The user {login} has been authorized to use the system.")
+            self.update_log(f"The user '{login}' has been authorized to use the system.")
             sleep(1)
             main_menu()
         else:
@@ -524,6 +530,7 @@ class Control_Unit(SO_Control_Unit):
             if car.lane == 1:
                 car.lane = 2
                 print("\nThe car changed its lane from 1 to 2.\n")
+                self.update_log(f"{obstacle.type} on lane {obstacle.lane} is detected. The car changed its lane from 1 to 2.")
             elif car.lane == 2:
                 if car.velocity < 80:  # If the velocity is less than 80, car changes its lane to the slowest one.
                     car.lane = 1
@@ -560,6 +567,13 @@ class Control_Unit(SO_Control_Unit):
     def add_obstacles(self, obstacle):
         self._obstacles.append(obstacle)
 
+    def list_obstacles(self):
+        print("\n", 30 * "=", "DETECTED OBSTACLES", 30 * "=", "\n")
+        print("{:<30} {:<18} {:<30}".format('DETECTED OBSTACLE', 'LANE', 'DATE AND TIME'))
+        for obstacle in self._obstacles:
+            print("{:<30} {:<18} {:<30}".format(obstacle.type, obstacle.lane, obstacle.timestamp))
+        print("\n", 78 * "=", "\n")
+
     def update_log(self, text):
        # Calculating timestamp
         time_now = datetime.now()
@@ -593,7 +607,7 @@ class User(System_User):
 
 class Lidar(Sensor):
     def __init__(self, types=None, obstacle=None):
-        self._types = {1: 'rock', 2: 'pedestrian', 3: 'animal', 4: 'trash', 5: 'traffic cone'}  # Obstacle type database
+        self._types = {1: 'Rock', 2: 'Pedestrian', 3: 'Animal', 4: 'Trash', 5: 'Traffic cone'}  # Obstacle type database
         self._obstacle = []
 
     def detect(self):
@@ -615,8 +629,12 @@ Your selection [1-3]: """))
             if type_code == x:
                 type = self._types.get(x)
 
+        # Calculating timestamp
+        time_now = datetime.now()
+        timestamp = time_now.strftime("%d/%m/%Y %H:%M:%S")
+
         # Updating the obstacle data according to the outcome of the detection
-        obs = Obstacle(type, lane)
+        obs = Obstacle(type, lane, timestamp)
         self._obstacle = (obs)
         self.send_data(obs)  # To send the data to the control unit for processing.
 
@@ -631,9 +649,10 @@ Your selection [1-3]: """))
 
 
 class Obstacle(Obstacles):
-    def __init__(self, type, lane):
+    def __init__(self, type, lane, timestamp):
         self._type = type
-        self._lane = lane  # Refers to the lane on the road where the obstacle is located
+        self._lane = lane
+        self._timestamp = timestamp
 
     @property
     def type(self):
@@ -642,6 +661,10 @@ class Obstacle(Obstacles):
     @property
     def lane(self):
         return self._lane
+
+    @property
+    def timestamp(self):
+        return self._timestamp
 
 class V2V_Comms(Comms_Module):
     def __init__(self, veh_types=None, vehicles=None):
@@ -735,6 +758,13 @@ Your selection [1-3]: """))
 
     def update_db(self, veh):
         self._vehicles.append(veh)
+
+    def list_vehicles(self):
+        print("\n", 30 * "=", "DETECTED VEHICLES", 31 * "=", "\n")
+        print("{:<33} {:<15} {:<15} {:<15}".format('DETECTED VEHICLE', 'DIRECTION', 'LANE', 'VELOCITY'))
+        for vehicle in self._vehicles:
+            print("{:<33} {:<15} {:<15} {:<15}".format(vehicle.type, vehicle.direction, vehicle.lane, vehicle.velocity))
+        print("\n", 78 * "=", "\n")
 
     def send_data(self, veh):
         control_unit.eval_veh(veh)
@@ -836,7 +866,8 @@ def main_menu():
         print("""
         1. Get information about the car
         2. Interact with the car
-        3. Exit
+        3. Change user
+        4. Exit
         """)
         print(97 * "=")
         try:
@@ -846,6 +877,8 @@ def main_menu():
             elif choice == 2:
                 interact_menu()
             elif choice == 3:
+                user_login()
+            elif choice == 4:
                 print("Thank you for using SCIS!")
                 sleep(1)
                 exit()
@@ -865,12 +898,14 @@ def inf_menu():
         1. Check the current status of the car
         2. Check the car log
         3. Print out the user list
-        4. Return to main menu
-        5. Exit the system
+        4. Print out the list of obstacles detected
+        5. Print out the list of vehicles detected
+        6. Return to main menu
+        7. Exit the system
             """)
         print(97 * "=")
         try:
-            choice = int(input("Please make your choice [1-5] : "))
+            choice = int(input("Please make your choice [1-7] : "))
             if choice == 1:
                 print("")
                 car.print_state()
@@ -886,8 +921,12 @@ def inf_menu():
                 print("")
                 sleep(1)
             elif choice == 4:
-                main_menu()
+                control_unit.list_obstacles()
             elif choice == 5:
+                v2vcomms.list_vehicles()
+            elif choice == 6:
+                main_menu()
+            elif choice == 7:
                 print("Thank you for using SCIS!")
                 sleep(2)
                 exit()

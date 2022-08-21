@@ -99,6 +99,10 @@ class SO_Control_Unit(ABC):
         raise NotImplementedError
 
     @abstractmethod
+    def list_obstacles(self):
+        raise NotImplementedError
+
+    @abstractmethod
     def update_log(self):
         raise NotImplementedError
 
@@ -185,6 +189,10 @@ class Comms_Module(ABC):
 
     @abstractmethod
     def update_db(self):
+        raise NotImplementedError
+
+    @abstractmethod
+    def list_vehicles(self):
         raise NotImplementedError
 
     @abstractmethod

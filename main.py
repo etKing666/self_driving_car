@@ -8,12 +8,11 @@ from sys import exit
 class SO_Control_Unit(ABC):
     """Control unit stores all the critical information and manages the car."""
 
-    def __init__(self, users, obstacles=None, status=False, log=None, car_info=None):
+    def __init__(self, users, obstacles=None, status=False, log=None):
         self._users = users
         self._obstacles = obstacles
         self._log = log
         self._status = status
-        self._car_info = car_info
 
     @abstractmethod
     def add_user(self):
@@ -88,21 +87,6 @@ class SO_Control_Unit(ABC):
 
     @abstractmethod
     def add_obstacles(self):
-        raise NotImplementedError
-
-    @property
-    @abstractmethod
-    def car_info(self):
-        raise NotImplementedError
-
-    @car_info.setter
-    @abstractmethod
-    def car_info(self, value):
-        raise NotImplementedError
-
-    @car_info.deleter
-    @abstractmethod
-    def car_info(self):
         raise NotImplementedError
 
 
@@ -318,19 +302,18 @@ class Vehicle(Smart_Vehicle):
 
 class Car(Vehicle):
     def print_state(self):
-        print(f"Car type: {self.type}")
+        print(f"Vehicle type: {self.type}")
         print(f"Velocity: {self.velocity}")
         print(f"Direction: {self.direction}")
         print(f"Lane: {self.lane}")
 
 
 class Control_Unit(SO_Control_Unit):
-    def __init__(self, users, obstacles=None, status=False, log=None, car_info=None):
+    def __init__(self, users, obstacles=None, status=False, log=None):
         self._users = users
         self._obstacles = []
         self._status = status
         self._log = log
-        # self._car_info = []
 
     def add_user(self):
         new_user = (input("Please enter the username of the user: "))
@@ -361,30 +344,35 @@ class Control_Unit(SO_Control_Unit):
     def start_car(self, vehicle):
         if self.status:
             print("\nThe car has already been started. It is not possible to start it again.\n")
-            sleep(2)
+            sleep(1)
         else:
             self.status = True
             vehicle.velocity = 50
             print("\nThe car has been started. The car's speed is set to 50 km/h.\n")
-            sleep(2)
+            sleep(1)
         interact_menu()
 
     def accelerate(self, vehicle):
         if not self.status:
             print("\nThe car is not activated. Turn on the car first to accelerate.\n")
+            sleep(1)
         else:
             vehicle.velocity += 10
             print(f"\nThe car has been accelerated. The car's speed is set to {vehicle.velocity} km/h.\n")
+            sleep(1)
 
     def brake(self, vehicle):
         if not self.status:
             print("\nThe car is not activated. Turn on the car first to brake.\n")
+            sleep(1)
         else:
             if vehicle.velocity == 0:
                 print("\nThe car is stopped already. It is not possible to reduce the speed.\n")
+                sleep(1)
             else:
                 vehicle.velocity -= 10
                 print(f"\nThe car's speed has been reduced. The car's speed is set to {vehicle.velocity} km/h.\n")
+                sleep(1)
 
     def stop(self, vehicle):
         if not self._status:
@@ -392,12 +380,60 @@ class Control_Unit(SO_Control_Unit):
         else:
             if vehicle.velocity == 0:
                 print("\nThe car has already been stopped. You can't stop it again.\n")
+                sleep(1)
             else:
                 vehicle.velocity = 0
                 print("\nThe car has been stopped.\n")
+                sleep(1)
 
     def eval_sign(self, sign):
-        pass
+        # Unpacking the object attributes to variables for easier processing
+        code = sign.type
+        desc = sign.desc
+
+        if code == 1:
+            if car.velocity <= 50:
+                print("\nCar's speed is already below (or equal to) 50. No action is taken.\n")
+                sleep(1)
+            else:
+                car.velocity = 50
+                print("\nCar's speed is set to 50 km/h.\n")
+                sleep(1)
+        elif code == 2:
+            if car.velocity <= 90:
+                print("\nCar's speed is already below (or equal to) 90. No action is taken.\n")
+                sleep(1)
+            else:
+                car.velocity = 90
+                print("\nCar's speed is set to 90 km/h.\n")
+                sleep(1)
+        elif code == 3:
+            if car.velocity == 0:
+                print("\nThe car has already been stopped. You can't stop it again.\n")
+                sleep(1)
+            else:
+                car.velocity = 0
+                print("\nThe car has been stopped.\n")
+                sleep(1)
+        elif code == 4:
+            if car.velocity == 0:
+                print("\nThe car is not moving. No action is taken.\n")
+                sleep(1)
+            else:
+                car.velocity = car.velocity * 0.7
+                print("\nDue to slippery road, the speed of the car is reduced %30. The current speed of the car is {"
+                      "car.velocity}.\n")
+                sleep(1)
+        elif code == 5:
+            if car.velocity >= 60:
+                print("\nCar's speed is already above (or equal to) 60. No action is taken.\n")
+                sleep(1)
+            else:
+                car.velocity = 60
+                print("\nCar's speed is set to 60 km/h.\n")
+                sleep(1)
+
+        # No corner cases are included here, as the input is already checked for validity via try/except statements.
 
     def eval_veh(self, veh):
         # Compares the car's information against the vehicle detected
@@ -471,19 +507,6 @@ class Control_Unit(SO_Control_Unit):
         self._obstacles.append(obstacle)  # Adds the obstacle to the obstacle list
         self.eval_obs(obstacle)  # Sends the obstacle for evaluation
 
-    @property
-    def car_info(self):
-        return self._car_info
-
-    @car_info.setter
-    def car_info(self, value):
-        self._car_info.append(value)
-
-    @car_info.deleter
-    def car_info(self):
-        del self._car_info
-
-
 class User(System_User):
 
     def __init__(self, name, surname, username):
@@ -556,8 +579,6 @@ class Obstacle(Obstacles):
     def lane(self):
         return self._lane
 
-
-# noinspection PyUnreachableCode
 class V2V_Comms(Comms_Module):
     def __init__(self, veh_types=None, vehicles=None):
         self._veh_types = {1: 'Car', 2: 'Van', 3: 'SUV', 4: 'Truck', 5: 'Trailer'}
@@ -624,7 +645,7 @@ Your selection [N or S]: """)
         while True:
             try:
                 lane = int(input("""\n Please select a lane the vehicle is on.
-                Your selection [1-3]: """))
+Your selection [1-3]: """))
                 if lane not in [1, 2, 3]:
                     print("\nPlease make a valid choice [1-3]\n")
                     sleep(1)
@@ -664,18 +685,24 @@ class TSRS(Sign_Recognition_System):
 
     def detect_sign(self):
         """Detects the traffic sign."""
-        try:
-            self._sign_code = int(input(""" Please select an obstacle to place on the road:
-             1. Speed Limit (50 km/h)
-             2. Speed Limit (90 km/h)
-             3. Stop
-             4. Pedestrian Crosing
-             5. Minimum Speed Limit (60 km/h)
-             Your selection [1-5]: """))
-            if self._sign_code < 1 or self._sign_code > 5:
-                raise ValueError("Invalid input")
-        except ValueError:
-            print("Please enter an integer.")
+        while True:
+            try:
+                self._sign_code = int(input("""\nPlease select a traffic sign to put on the road:
+         1. Speed Limit (50 km/h)
+         2. Speed Limit (90 km/h)
+         3. Stop
+         4. Slippery Road
+         5. Minimum Speed Limit (60 km/h)
+         Your selection [1-5]: """))
+                if self._sign_code < 1 or self._sign_code > 5:
+                    print("Invalid input. Please provide a valid input [1-5]")
+                    sleep(1)
+            except ValueError:
+                print("Please enter an integer.")
+                sleep(1)
+            else:
+                return self.sign_code
+                break
 
     def check_db(self, code):
         return sign_db.check_sign(code)
@@ -683,6 +710,10 @@ class TSRS(Sign_Recognition_System):
     def send_data(self, sign_code, sign_desc):
         traffic_sign = Traffic_Sign(sign_code, sign_desc)
         control_unit.eval_sign(traffic_sign)
+
+    @property
+    def sign_code(self):
+        return self._sign_code
 
 class Traffic_Sign(T_Sign):
     def __init__(self, type=None, desc=None):
@@ -699,7 +730,7 @@ class Traffic_Sign(T_Sign):
 
     @property
     def desc(self):
-        return self.desc
+        return self._desc
 
     @desc.setter
     def desc(self, value):
@@ -708,24 +739,12 @@ class Traffic_Sign(T_Sign):
 
 class TMA_DB(Sign_DB):
     def __init__(self, signs=None):
-        self._signs = {1: 'Speed Limit (50 km/h)', 2: 'Speed Limit (90 km/H)', 3: 'Stop', 4: 'Pedestrian Crosing',
+        self._signs = {1: 'Speed Limit (50 km/h)', 2: 'Speed Limit (90 km/H)', 3: 'Stop', 4: 'Slippery Road',
                        5: 'Minimum Speed Limit (60 km/h)'}
 
     def check_sign(self, code):
         return self._signs.get(code)
 
-    # Helper functions  DO WE REALLY NEED THEM??
-
-    # def update_car_info(car):
-    # Updates car information in the control unit
-    """Bunu da object'i göndererek yapalım"""
-
-
-#    del control_unit.car_info
-#    control_unit.car_info = car.type
-#    control_unit.car_info = car._direction
-#    control_unit.car_info = car._lane
-#    control_unit.car_info = car._velocity
 
 # Creating objects
 admin = User('John', 'Doe', 'admin')
@@ -752,14 +771,14 @@ def user_login():
 
 
 def main_menu():
-    print(30 * "=", "SMART CAR INFORMATION SYSTEM (SCIS)", 30 * "=")
-    print("""
-    1. Get information about the car
-    2. Interact with the car
-    3. Exit
-    """)
-    print(97 * "=")
     while True:
+        print(30 * "=", "SMART CAR INFORMATION SYSTEM (SCIS)", 30 * "=")
+        print("""
+        1. Get information about the car
+        2. Interact with the car
+        3. Exit
+        """)
+        print(97 * "=")
         try:
             choice = int(input("Please make your choice [1-3] : "))
             if choice == 1:
@@ -773,24 +792,23 @@ def main_menu():
             else:
                 print("You have entered an invalid choice. Please try again.")
                 sleep(2)
-        except:
+        except ValueError:
             print("Invalid input. Please provide a valid input [1-3]")
 
 
 def inf_menu():
-    print(30 * "=", "SMART CAR INFORMATION SYSTEM (SCIS)", 30 * "=")
-    print("""
-    INFORMATION MENU
-    
+    while True:
+        print(30 * "=", "SMART CAR INFORMATION SYSTEM (SCIS)", 30 * "=")
+        print("""
+        INFORMATION MENU
+        
         1. Check the current status of the car
         2. Check the car log
         3. Print out the user list
         4. Return to main menu
         5. Exit the system
-        """)
-    print(97 * "=")
-
-    while True:
+            """)
+        print(97 * "=")
         try:
             choice = int(input("Please make your choice [1-5] : "))
             if choice == 1:
@@ -811,15 +829,16 @@ def inf_menu():
             else:
                 print("You have entered an invalid choice. Please try again.")
                 sleep(2)
-        except:
+        except ValueError:
             print("Invalid input. Please provide a valid input [1-5]")
 
 
 def interact_menu():
-    print(30 * "=", "SMART CAR INFORMATION SYSTEM (SCIS)", 30 * "=")
-    print("""
-    INTERACTION MENU
-
+    while True:
+        print(30 * "=", "SMART CAR INFORMATION SYSTEM (SCIS)", 30 * "=")
+        print("""
+        INTERACTION MENU
+    
         1. Start the car
         2. Accelerate
         3. Brake
@@ -831,9 +850,9 @@ def interact_menu():
         9. Delete a user
         10. Return to main menu
         11. Exit the system
-        """)
-    print(97 * "=")
-    while True:
+            """)
+        print(97 * "=")
+
         try:
             choice = int(input("Please make your choice [1-11] : "))
             if choice == 1:
@@ -856,8 +875,11 @@ def interact_menu():
                 code = sign_recog.detect_sign()
                 description = sign_recog.check_db(code)
                 sign_recog.send_data(code, description)
+                sleep(2)
+                break
             elif choice == 6:
                 v2vcomms.get_data()
+                break
             elif choice == 7:
                 control_unit.stop(car)
                 sleep(2)
@@ -879,8 +901,8 @@ def interact_menu():
             else:
                 print("You have entered an invalid choice. Please try again.")
                 sleep(2)
-        except:
-                print("Invalid input. Please provide a valid input [1-11]")
-
+        except ValueError:
+            print("Invalid input. Please provide a valid input [1-11]")
+            sleep(1)
 
 user_login()

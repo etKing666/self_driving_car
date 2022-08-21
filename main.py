@@ -310,31 +310,23 @@ class Control_Unit(SO_Control_Unit):
         self._obstacles = []
         self._status = status
         self._log = log
-        self._car_info = []
+        # self._car_info = []
 
     def add_user(self):
         new_user = (input("Please enter the username of the user: "))
         if new_user in self._users:
             print("The username already exists! Returning to the main menu.")
-            sleep(2)
-            main_menu()
         else:
             self._users.add(new_user) # Adding username to the user database
             print("The user has been added! Returning to the main menu.")
-            sleep(2)
-            main_menu()
 
     def delete_user(self):
         del_user = (input("Please enter the username of the user that you want to delete: "))
         if del_user in self._users:
             self._users.remove(del_user)
             print("The username has been deleted from the user database! Returning to the main menu.")
-            sleep(2)
-            main_menu()
         else:
             print("This user doesn't exist! Returning to the main menu.")
-            sleep(2)
-            main_menu()
 
     def auth(self, login):
         if login in control_unit.users:
@@ -347,29 +339,42 @@ class Control_Unit(SO_Control_Unit):
             exit()
 
     def start_car(self, vehicle):
-        vehicle.velocity = 50
-        print("The car is started. The car's speed is set to 50 km/h.")
+        if self.status:
+            print ("\nThe car has already been started. It is not possible to start it again.\n")
+            sleep(2)
+        else:
+            self.status = True
+            vehicle.velocity = 50
+            print ("\nThe car has been started. The car's speed is set to 50 km/h.\n")
+            sleep(2)
+        interact_menu()
 
     def accelerate(self, vehicle):
-        if not self._status:
-            print("The car is not activated. Turn on the car first to accelerate.")
+        if not self.status:
+            print("\nThe car is not activated. Turn on the car first to accelerate.\n")
         else:
             vehicle.velocity += 10
-            print(f"The car has been accelerated. The car's speed is set to {vehicle.velocity} km/h.")
+            print(f"\nThe car has been accelerated. The car's speed is set to {vehicle.velocity} km/h.\n")
 
     def brake(self, vehicle):
-        if not self._status:
-            print("The car is not activated. Turn on the car first to brake.")
+        if not self.status:
+            print("\nThe car is not activated. Turn on the car first to brake.\n")
         else:
             if vehicle.velocity == 0:
-                print("The car is stopped already. It is not possible to reduce the speed.")
+                print("\nThe car is stopped already. It is not possible to reduce the speed.\n")
             else:
                 vehicle.velocity -= 10
-                print(f"The car's speed has been reduced. The car's speed is set to {vehicle.velocity} km/h.")
+                print(f"\nThe car's speed has been reduced. The car's speed is set to {vehicle.velocity} km/h.\n")
 
     def stop(self, vehicle):
-        vehicle.velocity = 0
-        print("The car has been stopped.")
+        if not self._status:
+            print("\nThe car is not activated. It is not possible to stop the car.\n")
+        else:
+            if vehicle.velocity == 0:
+                print("\nThe car has already been stopped. You can't stop it again.\n")
+            else:
+                vehicle.velocity = 0
+                print("\nThe car has been stopped.\n")
 
     def eval_sign(self):
         #Evaluates traffic signs detected
@@ -381,52 +386,50 @@ class Control_Unit(SO_Control_Unit):
             if veh.lane == car.lane:  # If they are approaching to each other on the same lane
                 if car.lane == 1:
                     car.lane = 2
-                    print("The car changed its lane from 1 to 2.")
+                    print("\nThe car changed its lane from 1 to 2.\n")
                 elif car.lane == 2:
                     if car.velocity < 80:  # If the velocity is less than 80, car changes its lane to the slowest one.
-                        car.lane == 1
-                        print("The car changed its lane from 2 to 1.")
+                        car.lane = 1
+                        print("\nThe car changed its lane from 2 to 1.\n")
                     else:
                         car.lane = 3
-                        print("The car changed its lane from 2 to 3.")
+                        print("\nThe car changed its lane from 2 to 3.\n")
                 else:
                     car.lane = 2
-                    print("The car changed its lane from 3 to 2.")
+                    print("\nThe car changed its lane from 3 to 2.\n")
             else:
-                print("The cars are on different lanes, no action has been taken.")
+                print("\nThe cars are on different lanes, no action has been taken.\n")
         else:
             if veh.lane == car.lane:
-                if veh.velocity =< car.velocity:
-                    print("The car is so slow to pose a threat.")  # It is on the same lane, but slower than our car.
+                if veh.velocity <= car.velocity:
+                    print("\nThe car is so slow to pose a threat.\n")  # It is on the same lane, but slower than our car.
                 else:
                     if car.lane == 1:
-                        print("The car is already on the slowest lane. So, no actions are taken.")
+                        print("\nThe car is already on the slowest lane. So, no actions are taken.\n")
                     elif car.lane == 2:
                         car.lane = 1
-                        print("The car changed its lane from 2 to 1.")
+                        print("\nThe car changed its lane from 2 to 1.\n")
                     else:
                         car.lane = 2
-                        print("The car changed its lane from 3 to 2.")
-        main_menu()
+                        print("\nThe car changed its lane from 3 to 2.\n")
 
     def eval_obs(self, obs):
         if car.lane == obs.lane:
             if car.lane == 1:
                 car.lane = 2
-                print("The car changed its lane from 1 to 2.")
+                print("\nThe car changed its lane from 1 to 2.\n")
             elif car.lane == 2:
                 if car.velocity < 80: # If the velocity is less than 80, car changes its lane to the slowest one.
                     car.lane = 1
-                    print("The car changed its lane from 2 to 1.")
+                    print("\nThe car changed its lane from 2 to 1.\n")
                 else:
                     car.lane = 3
-                    print("The car changed its lane from 2 to 3.")
+                    print("\nThe car changed its lane from 2 to 3.\n")
             else:
                 car.lane = 2
-                print("The car changed its lane from 3 to 2.")
+                print("\nThe car changed its lane from 3 to 2.\n")
         else:
-            print(f"The car is on lane {car.lane} and obstacle is on lane {obs.lane}. No action is taken.")
-
+            print(f"\nThe car is on lane {car.lane} and obstacle is on lane {obs.lane}. No action is taken.\n")
 
     @property
     def status(self):
@@ -469,7 +472,8 @@ class User(System_User):
 
     def turn_on(self, controler):
         if controler.status == True:
-            print("The car is already turned on!")
+            print("\nThe car is already turned on!\n")
+            sleep(2)
         else:
             controler.status = True
 
@@ -506,8 +510,6 @@ class Lidar(Sensor):
         obs = Obstacle(type, lane)
         self._obstacle = (obs)
         self.send_data(obs) # To send the data to the control unit for processing.
-        # Returns to the main menu
-        main_menu()
 
     def send_data(self, obs):
         """Sends the data to the control unit"""
@@ -666,7 +668,10 @@ def inf_menu():
     choice = int(input("Please make your choice [1-5] : "))
     while True:
         if choice == 1:
-            pass
+            print("")
+            car.print_state()
+            sleep(2)
+            break
         elif choice == 2:
             pass
         elif choice == 3:
@@ -706,23 +711,37 @@ def interact_menu():
     while True:
         if choice == 1:
             control_unit.start_car(car)
+            sleep(2)
+            break
         elif choice == 2:
             control_unit.accelerate(car)
+            sleep(2)
+            break
         elif choice == 3:
             control_unit.brake(car)
+            sleep(2)
+            break
         elif choice == 4:
             print(car.lane)
             lidar.detect()
+            sleep(2)
+            break
         elif choice == 5:
             pass  # Put a traffic sign
         elif choice == 6:
             v2vcomms.get_data()
         elif choice == 7:
             control_unit.stop(car)
+            sleep(2)
+            break
         elif choice == 8:
             control_unit.add_user()
+            sleep(2)
+            break
         elif choice == 9:
             control_unit.delete_user()
+            sleep(2)
+            break
         elif choice == 10:
             main_menu()
         elif choice == 11:

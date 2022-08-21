@@ -351,12 +351,21 @@ class Control_Unit(SO_Control_Unit):
         print("The car is started. The car's speed is set to 50 km/h.")
 
     def accelerate(self, vehicle):
-        vehicle.velocity += 10
-        print(f"The car has been accelerated. The car's speed is set to {vehicle.velocity} km/h.")
+        if not self._status:
+            print("The car is not activated. Turn on the car first to accelerate.")
+        else:
+            vehicle.velocity += 10
+            print(f"The car has been accelerated. The car's speed is set to {vehicle.velocity} km/h.")
 
     def brake(self, vehicle):
-        vehicle.velocity -= 10
-        print(f"The car's speed has been reduced. The car's speed is set to {vehicle.velocity} km/h.")
+        if not self._status:
+            print("The car is not activated. Turn on the car first to brake.")
+        else:
+            if vehicle.velocity == 0:
+                print("The car is stopped already. It is not possible to reduce the speed.")
+            else:
+                vehicle.velocity -= 10
+                print(f"The car's speed has been reduced. The car's speed is set to {vehicle.velocity} km/h.")
 
     def stop(self, vehicle):
         vehicle.velocity = 0

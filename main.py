@@ -4,8 +4,9 @@ from sys import exit
 from datetime import datetime
 
 # Generic timestamp that would be used throughout the program
-time_now = datetime.now()
-timestamp = time_now.strftime("%d/%m/%Y %H:%M:%S")
+
+#time_now = datetime.now()
+#timestamp = time_now.strftime("%d/%m/%Y %H:%M:%S")
 
 # Defining interfaces:
 
@@ -335,31 +336,31 @@ class Control_Unit(SO_Control_Unit):
         new_user = (input("Please enter the username of the user: "))
         if new_user in self._users:
             print("The username already exists! Returning to the main menu.")
-            self.update_log("Tried to add a new user. The user already exists.", timestamp)
+            self.update_log("Tried to add a new user. The user already exists.")
         else:
             self._users.add(new_user)  # Adding username to the user database
             print("The user has been added! Returning to the main menu.")
-            self.update_log(f"The user {new_user} has been added.", timestamp)
+            self.update_log(f"The user {new_user} has been added.")
 
     def delete_user(self):
         del_user = (input("Please enter the username of the user that you want to delete: "))
         if del_user in self._users:
             self._users.remove(del_user)
             print("The username has been deleted from the user database! Returning to the main menu.")
-            self.update_log(f"The user {del_user} has been deleted.", timestamp)
+            self.update_log(f"The user {del_user} has been deleted.")
         else:
             print("This user doesn't exist! Returning to the main menu.")
-            self.update_log("Tried to delete a user. The user doesn't exist.", timestamp)
+            self.update_log("Tried to delete a user. The user doesn't exist.")
 
     def auth(self, login):
         if login in control_unit.users:
             print("You are authorized to use the system!\n")
-            self.update_log(f"The user {login} has been authorized to use the system.", timestamp)
+            self.update_log(f"The user {login} has been authorized to use the system.")
             sleep(1)
             main_menu()
         else:
             print("You are not authorized to use the system!\n")
-            self.update_log("Unauthorized attempt to access the system.", timestamp)
+            self.update_log("Unauthorized attempt to access the system.")
             sleep(1)
             exit()
 
@@ -371,62 +372,57 @@ class Control_Unit(SO_Control_Unit):
             self.status = True
             vehicle.velocity = 50
             print("\nThe car has been started. The car's speed is set to 50 km/h.\n")
-            self.update_log("The car has been activated. The car's speed is set to 50 km/h.", timestamp)
+            self.update_log("The car has been activated. The car's speed is set to 50 km/h.")
             sleep(1)
         interact_menu()
 
     def accelerate(self, vehicle):
         if not self.status:
             print("\nThe car is not activated. Turn on the car first to accelerate.\n")
-            self.update_log("Attempted to accelerate the car. The car is not activated.", timestamp)
-            sleep(1)
+            self.update_log("Attempted to accelerate the car. The car is not activated.")
         else:
             vehicle.velocity += 10
             print(f"\nThe car has been accelerated. The car's speed is set to {vehicle.velocity} km/h.\n")
-            self.update_log(f"The car has been accelerated. The car's speed is set to {vehicle.velocity} km/h.", timestamp)
-            sleep(1)
+            self.update_log(f"The car has been accelerated. The car's speed is set to {vehicle.velocity} km/h.")
 
     def brake(self, vehicle):
         if not self.status:
             print("\nThe car is not activated. Turn on the car first to brake.\n")
-            self.update_log("Attempted to slow down the car. The car is not activated.", timestamp)
-            sleep(1)
+            self.update_log("Attempted to slow down the car. The car is not activated.")
         else:
             if vehicle.velocity == 0:
                 print("\nThe car is stopped already. It is not possible to reduce the speed.\n")
-                self.update_log("Attempted to reduce the speed the car. The car is already stopped.", timestamp)
-                sleep(1)
+                self.update_log("Attempted to reduce the speed the car. The car is already stopped.")
             else:
                 vehicle.velocity -= 10
                 print(f"\nThe car's speed has been reduced. The car's speed is set to {vehicle.velocity} km/h.\n")
-                self.update_log(f"The car's speed has been reduced. The car's speed is set to {vehicle.velocity} km/h.", timestamp)
-                sleep(1)
+                self.update_log(f"The car's speed has been reduced. The car's speed is set to {vehicle.velocity} km/h.")
 
     def change_direction(self):
         if car.direction == "N":
             car.direction = "S"
             print(f"\nThe car's direction has been changed. New direction is: {car.direction}\n")
-            self.update_log(f"The car's direction has been changed. New direction is: {car.direction}.", timestamp)
+            self.update_log(f"The car's direction has been changed. New direction is: {car.direction}.")
             sleep(1)
         else:
             car.direction ="N"
             print(f"\nThe car's direction has been changed. New direction is: {car.direction}\n")
-            self.update_log(f"The car's direction has been changed. New direction is: {car.direction}.", timestamp)
+            self.update_log(f"The car's direction has been changed. New direction is: {car.direction}.")
             sleep(1)
 
     def stop(self, vehicle):
         if not self._status:
             print("\nThe car is not activated. It is not possible to stop the car.\n")
-            self.update_log("Attempted to stop the car. The car is not activated.", timestamp)
+            self.update_log("Attempted to stop the car. The car is not activated.")
         else:
             if vehicle.velocity == 0:
                 print("\nThe car has already been stopped. You can't stop it again.\n")
-                self.update_log("Attempted to stop the car. The car is already stopped.", timestamp)
+                self.update_log("Attempted to stop the car. The car is already stopped.")
                 sleep(1)
             else:
                 vehicle.velocity = 0
                 print("\nThe car has been stopped.\n")
-                self.update_log("The car has been stopped.", timestamp)
+                self.update_log("The car has been stopped.")
                 sleep(1)
 
     def eval_sign(self, sign):
@@ -437,52 +433,52 @@ class Control_Unit(SO_Control_Unit):
         if code == 1:
             if car.velocity <= 50:
                 print(f"\nCar's speed is {car.velocity}. No action is taken.\n")
-                self.update_log(f"{desc} sign detected. Car's speed is below 50. No action taken.", timestamp)
+                self.update_log(f"{desc} sign detected. Car's speed is below 50. No action taken.")
                 sleep(1)
             else:
                 car.velocity = 50
                 print("\nCar's speed is set to 50 km/h.\n")
-                self.update_log(f"{desc} sign detected. Car's speed is set to 50 km/h.", timestamp)
+                self.update_log(f"{desc} sign detected. Car's speed is set to 50 km/h.")
                 sleep(1)
         elif code == 2:
             if car.velocity <= 90:
                 print(f"\nCar's speed is {car.velocity}. No action is taken.\n")
-                self.update_log(f"{desc} sign detected. Car's speed is {car.velocity}. No action taken.", timestamp)
+                self.update_log(f"{desc} sign detected. Car's speed is {car.velocity}. No action taken.")
                 sleep(1)
             else:
                 car.velocity = 90
                 print("\nCar's speed is set to 90 km/h.\n")
-                self.update_log(f"{desc} sign detected. Car's speed is set to 90 km/h.", timestamp)
+                self.update_log(f"{desc} sign detected. Car's speed is set to 90 km/h.")
                 sleep(1)
         elif code == 3:
             if car.velocity == 0:
                 print("\nThe car has already been stopped. No action istaken.\n")
-                self.update_log(f"{desc} sign detected. The car is already stopped.", timestamp)
+                self.update_log(f"{desc} sign detected. The car is already stopped.")
                 sleep(1)
             else:
                 car.velocity = 0
                 print("\nThe car has been stopped.\n")
-                self.update_log(f"{desc} sign detected. Car has been stopped.", timestamp)
+                self.update_log(f"{desc} sign detected. Car has been stopped.")
                 sleep(1)
         elif code == 4:
             if car.velocity == 0:
                 print("\nThe car is not moving. No action is taken.\n")
-                self.update_log(f"{desc} sign detected. Car is already stopped. No action is taken.", timestamp)
+                self.update_log(f"{desc} sign detected. Car is already stopped. No action is taken.")
                 sleep(1)
             else:
                 car.velocity = car.velocity * 0.7
                 print(f"\nDue to slippery road, the speed of the car is reduced 30%. The current speed of the car is {car.velocity}.\n")
-                self.update_log(f"{desc} sign detected. The speed is reduced 30% and set to {car.velocity}.", timestamp)
+                self.update_log(f"{desc} sign detected. The speed is reduced 30% and set to {car.velocity}.")
                 sleep(1)
         elif code == 5:
             if car.velocity >= 60:
                 print(f"\nCar's speed is {car.velocity}. No action is taken.\n")
-                self.update_log(f"{desc} sign detected. Car's speed is {car.velocity}. No action is taken.", timestamp)
+                self.update_log(f"{desc} sign detected. Car's speed is {car.velocity}. No action is taken.")
                 sleep(1)
             else:
                 car.velocity = 60
                 print("\nCar's speed is set to 60 km/h.\n")
-                self.update_log(f"{desc} sign detected. Car's speed is set to {car.velocity}.", timestamp)
+                self.update_log(f"{desc} sign detected. Car's speed is set to {car.velocity}.")
                 sleep(1)
 
         # No corner cases are included here, as the input is already checked for validity via try/except statements.
@@ -494,40 +490,40 @@ class Control_Unit(SO_Control_Unit):
                 if car.lane == 1:
                     car.lane = 2
                     print("\nThe car changed its lane from 1 to 2.\n")
-                    self.update_log(f"A vehicle (Lane: {veh.lane} Direction: {veh.direction}) detected. The car changed its lane from 1 to 2.", timestamp)
+                    self.update_log(f"A vehicle (Lane: {veh.lane} Direction: {veh.direction}) detected. The car changed its lane from 1 to 2.")
                 elif car.lane == 2:
                     if car.velocity < 80:  # If the velocity is less than 80, car changes its lane to the slowest one.
                         car.lane = 1
                         print("\nThe car changed its lane from 2 to 1.\n")
-                        self.update_log(f"A vehicle (Lane: {veh.lane} Direction: {veh.direction}) detected. The car changed its lane from 2 to 1.", timestamp)
+                        self.update_log(f"A vehicle (Lane: {veh.lane} Direction: {veh.direction}) detected. The car changed its lane from 2 to 1.")
                     else:
                         car.lane = 3
                         print("\nThe car changed its lane from 2 to 3.\n")
-                        self.update_log(f"A vehicle (Lane: {veh.lane} Direction: {veh.direction}) detected. The car changed its lane from 2 to 3.", timestamp)
+                        self.update_log(f"A vehicle (Lane: {veh.lane} Direction: {veh.direction}) detected. The car changed its lane from 2 to 3.")
                 else:
                     car.lane = 2
                     print("\nThe car changed its lane from 3 to 2.\n")
-                    self.update_log(f"A vehicle (Lane: {veh.lane} Direction: {veh.direction}) detected. The car changed its lane from 3 to 2.", timestamp)
+                    self.update_log(f"A vehicle (Lane: {veh.lane} Direction: {veh.direction}) detected. The car changed its lane from 3 to 2.")
             else:
                 print("\nThe cars are on different lanes, no action has been taken.\n")
-                self.update_log(f"A vehicle (Lane: {veh.lane} Direction: {veh.direction}) detected. No action is taken (car on a different lane).", timestamp)
+                self.update_log(f"A vehicle (Lane: {veh.lane} Direction: {veh.direction}) detected. No action is taken (car on a different lane).")
         else:
             if veh.lane == car.lane:
                 if veh.velocity <= car.velocity:
                     print("\nThe car is so slow to pose a threat.\n")  # It is on the same lane, but slower than our car.
-                    self.update_log(f"A vehicle (Lane: {veh.lane} Direction: {veh.direction}) detected. No action is taken (car too slow).", timestamp)
+                    self.update_log(f"A vehicle (Lane: {veh.lane} Direction: {veh.direction}) detected. No action is taken (car too slow).")
                 else:
                     if car.lane == 1:
                         print("\nThe car is already on the slowest lane and other car should change the lane. No actions are taken.\n")
-                        self.update_log(f"A vehicle (Lane: {veh.lane} Direction: {veh.direction}) detected. No action is taken (car on slowest lane).", timestamp)
+                        self.update_log(f"A vehicle (Lane: {veh.lane} Direction: {veh.direction}) detected. No action is taken (car on slowest lane).")
                     elif car.lane == 2:
                         car.lane = 1
                         print("\nThe car changed its lane from 2 to 1.\n")
-                        self.update_log(f"A vehicle (Lane: {veh.lane} Direction: {veh.direction}) detected. The car changed its lane from 2 to 1.", timestamp)
+                        self.update_log(f"A vehicle (Lane: {veh.lane} Direction: {veh.direction}) detected. The car changed its lane from 2 to 1.")
                     else:
                         car.lane = 2
                         print("\nThe car changed its lane from 3 to 2.\n")
-                        self.update_log(f"A vehicle (Lane: {veh.lane} Direction: {veh.direction}) detected. The car changed its lane from 3 to 2.", timestamp)
+                        self.update_log(f"A vehicle (Lane: {veh.lane} Direction: {veh.direction}) detected. The car changed its lane from 3 to 2.")
 
     def eval_obs(self, obstacle):
         self.add_obstacles(obstacle)  # Adds the obstacle to the obstacle list
@@ -539,18 +535,18 @@ class Control_Unit(SO_Control_Unit):
                 if car.velocity < 80:  # If the velocity is less than 80, car changes its lane to the slowest one.
                     car.lane = 1
                     print("\nThe car changed its lane from 2 to 1.\n")
-                    self.update_log(f"{obstacle.type} on lane {obstacle.lane} is detected. The car changed its lane from 2 to 1.", timestamp)
+                    self.update_log(f"{obstacle.type} on lane {obstacle.lane} is detected. The car changed its lane from 2 to 1.")
                 else:
                     car.lane = 3
                     print("\nThe car changed its lane from 2 to 3.\n")
-                    self.update_log(f"{obstacle.type} on lane {obstacle.lane} is detected. The car changed its lane from 2 to 3.", timestamp)
+                    self.update_log(f"{obstacle.type} on lane {obstacle.lane} is detected. The car changed its lane from 2 to 3.")
             else:
                 car.lane = 2
                 print("\nThe car changed its lane from 3 to 2.\n")
-                self.update_log(f"{obstacle.type} on lane {obstacle.lane} is detected. The car changed its lane from 3 to 2.", timestamp)
+                self.update_log(f"{obstacle.type} on lane {obstacle.lane} is detected. The car changed its lane from 3 to 2.")
         else:
             print(f"\nThe car is on lane {car.lane} and obstacle is on lane {obstacle.lane}. No action is taken.\n")
-            self.update_log(f"{obstacle.type} on lane {obstacle.lane} is detected. No action is taken (different lane).", timestamp)
+            self.update_log(f"{obstacle.type} on lane {obstacle.lane} is detected. No action is taken (different lane).")
 
     @property
     def status(self):
@@ -571,8 +567,11 @@ class Control_Unit(SO_Control_Unit):
     def add_obstacles(self, obstacle):
         self._obstacles.append(obstacle)
 
-    def update_log(self, text, tstamp):
-        self._log.append([text, tstamp])
+    def update_log(self, text):
+       # Calculating timestamp
+        time_now = datetime.now()
+        timestamp = time_now.strftime("%d/%m/%Y %H:%M:%S")
+        self._log.append([text, timestamp])  # Adding the message with timestamp
 
     def read_log(self):
         print("\n", 30 * "=", "CAR LOG (starting from the most recent incident):", 30 * "=", "\n")

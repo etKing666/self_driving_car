@@ -15,7 +15,7 @@ class SO_Control_Unit(ABC):
 
     def __init__(self, users, obstacles=None, status=False, log=None):
         self._users = users
-        self._obstacles = obstacles
+        self._obstacles = []
         self._log = log
         self._status = status
 
@@ -114,45 +114,45 @@ class Smart_Vehicle(ABC):
         self._direction = direction
         self._lane = lane
 
-        @property
-        @abstractmethod
-        def type(self):
-            raise NotImplementedError
+    @property
+    @abstractmethod
+    def type(self):
+        raise NotImplementedError
 
-        @type.setter
-        @abstractmethod
-        def type(self, value):
-            raise NotImplementedError
+    @type.setter
+    @abstractmethod
+    def type(self, value):
+        raise NotImplementedError
 
-        @property
-        @abstractmethod
-        def velocity(self):
-            raise NotImplementedError
+    @property
+    @abstractmethod
+    def velocity(self):
+        raise NotImplementedError
 
-        @velocity.setter
-        @abstractmethod
-        def velocity(self, value):
-            raise NotImplementedError
+    @velocity.setter
+    @abstractmethod
+    def velocity(self, value):
+        raise NotImplementedError
 
-        @property
-        @abstractmethod
-        def direction(self):
-            raise NotImplementedError
+    @property
+    @abstractmethod
+    def direction(self):
+        raise NotImplementedError
 
-        @direction.setter
-        @abstractmethod
-        def direction(self, value):
-            raise NotImplementedError
+    @direction.setter
+    @abstractmethod
+    def direction(self, value):
+        raise NotImplementedError
 
-        @property
-        @abstractmethod
-        def lane(self):
-            raise NotImplementedError
+    @property
+    @abstractmethod
+    def lane(self):
+        raise NotImplementedError
 
-        @lane.setter
-        @abstractmethod
-        def lane(self, value):
-            raise NotImplementedError
+    @lane.setter
+    @abstractmethod
+    def lane(self, value):
+        raise NotImplementedError
 
 
 class Sensor(ABC):
@@ -434,52 +434,42 @@ class Control_Unit(SO_Control_Unit):
             if car.velocity <= 50:
                 print(f"\nCar's speed is {car.velocity}. No action is taken.\n")
                 self.update_log(f"{desc} sign detected. Car's speed is below 50. No action taken.")
-                sleep(1)
             else:
                 car.velocity = 50
                 print("\nCar's speed is set to 50 km/h.\n")
                 self.update_log(f"{desc} sign detected. Car's speed is set to 50 km/h.")
-                sleep(1)
         elif code == 2:
             if car.velocity <= 90:
                 print(f"\nCar's speed is {car.velocity}. No action is taken.\n")
                 self.update_log(f"{desc} sign detected. Car's speed is {car.velocity}. No action taken.")
-                sleep(1)
             else:
                 car.velocity = 90
                 print("\nCar's speed is set to 90 km/h.\n")
                 self.update_log(f"{desc} sign detected. Car's speed is set to 90 km/h.")
-                sleep(1)
         elif code == 3:
             if car.velocity == 0:
                 print("\nThe car has already been stopped. No action istaken.\n")
                 self.update_log(f"{desc} sign detected. The car is already stopped.")
-                sleep(1)
             else:
                 car.velocity = 0
                 print("\nThe car has been stopped.\n")
                 self.update_log(f"{desc} sign detected. Car has been stopped.")
-                sleep(1)
         elif code == 4:
             if car.velocity == 0:
                 print("\nThe car is not moving. No action is taken.\n")
                 self.update_log(f"{desc} sign detected. Car is already stopped. No action is taken.")
-                sleep(1)
             else:
                 car.velocity = car.velocity * 0.7
                 print(f"\nDue to slippery road, the speed of the car is reduced 30%. The current speed of the car is {car.velocity}.\n")
                 self.update_log(f"{desc} sign detected. The speed is reduced 30% and set to {car.velocity}.")
-                sleep(1)
         elif code == 5:
             if car.velocity >= 60:
                 print(f"\nCar's speed is {car.velocity}. No action is taken.\n")
                 self.update_log(f"{desc} sign detected. Car's speed is {car.velocity}. No action is taken.")
-                sleep(1)
             else:
                 car.velocity = 60
                 print("\nCar's speed is set to 60 km/h.\n")
                 self.update_log(f"{desc} sign detected. Car's speed is set to {car.velocity}.")
-                sleep(1)
 
         # No corner cases are included here, as the input is already checked for validity via try/except statements.
 
@@ -506,7 +496,7 @@ class Control_Unit(SO_Control_Unit):
                     self.update_log(f"A vehicle (Lane: {veh.lane} Direction: {veh.direction}) detected. The car changed its lane from 3 to 2.")
             else:
                 print("\nThe cars are on different lanes, no action has been taken.\n")
-                self.update_log(f"A vehicle (Lane: {veh.lane} Direction: {veh.direction}) detected. No action is taken (car on a different lane).")
+                self.update_log(f"A vehicle (Lane: {veh.lane} Direction: {veh.direction}) detected. No action is taken (different lane).")
         else:
             if veh.lane == car.lane:
                 if veh.velocity <= car.velocity:
@@ -524,6 +514,9 @@ class Control_Unit(SO_Control_Unit):
                         car.lane = 2
                         print("\nThe car changed its lane from 3 to 2.\n")
                         self.update_log(f"A vehicle (Lane: {veh.lane} Direction: {veh.direction}) detected. The car changed its lane from 3 to 2.")
+            else:
+                print("\nThe cars are on different lanes, no action has been taken.\n")
+                self.update_log(f"A vehicle (Lane: {veh.lane} Direction: {veh.direction}) detected. No action is taken (different lane).")
 
     def eval_obs(self, obstacle):
         self.add_obstacles(obstacle)  # Adds the obstacle to the obstacle list
@@ -584,7 +577,6 @@ class Control_Unit(SO_Control_Unit):
 
 
 class User(System_User):
-
     def __init__(self, name, surname, username):
         self._name = name
         self._surname = surname
@@ -734,7 +726,7 @@ Your selection [1-3]: """))
             if type_code == x:
                 car_type = self._veh_types.get(x)
 
-        # Creatig a Vehicle object using the input data
+        # Creating a Vehicle object using the input data
         vehicle = Vehicle(car_type, direction, lane, velocity)
 
         # Updating the obstacle data according to the outcome of the detection
@@ -815,12 +807,11 @@ class TMA_DB(Sign_DB):
         return self._signs.get(code)
 
 
-# Creating objects
+# Creating permanent objects
 admin = User('John', 'Doe', 'admin')
 control_unit = Control_Unit({'admin'})
 car = Car('Car', 'N', 1)
 v2vcomms = V2V_Comms()
-# update_car_info(car)
 lidar = Lidar()
 sign_db = TMA_DB()
 sign_recog = TSRS()
@@ -885,18 +876,15 @@ def inf_menu():
                 car.print_state()
                 print("")
                 sleep(1)
-                break
             elif choice == 2:
                 control_unit.read_log()
                 sleep(1)
-                break
             elif choice == 3:
                 print("\nThe current authorized users of the system:")
                 for name in control_unit.users:
                     print(name)
                 print("")
                 sleep(1)
-                break
             elif choice == 4:
                 main_menu()
             elif choice == 5:
@@ -908,7 +896,7 @@ def inf_menu():
                 sleep(1)
         except ValueError:
             print("Invalid input. Please provide a valid input [1-5]")
-
+            sleep(1)
 
 def interact_menu():
     while True:
@@ -936,44 +924,35 @@ def interact_menu():
             if choice == 1:
                 admin.turn_on()
                 sleep(1)
-                break
             elif choice == 2:
                 control_unit.accelerate(car)
                 sleep(1)
-                break
             elif choice == 3:
                 control_unit.brake(car)
                 sleep(1)
-                break
             elif choice == 4: # U-turn
                 control_unit.change_direction()
                 sleep(1)
             elif choice == 5:
                 lidar.detect()
                 sleep(1)
-                break
             elif choice == 6:
                 code = sign_recog.detect_sign()
                 description = sign_recog.check_db(code)
                 sign_recog.send_data(code, description)
                 sleep(1)
-                break
             elif choice == 7:
                 v2vcomms.get_data()
                 sleep(1)
-                break
             elif choice == 8:
                 control_unit.stop(car)
                 sleep(1)
-                break
             elif choice == 9:
                 control_unit.add_user()
                 sleep(1)
-                break
             elif choice == 10:
                 control_unit.delete_user()
                 sleep(1)
-                break
             elif choice == 11:
                 main_menu()
                 sleep(1)

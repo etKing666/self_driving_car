@@ -385,6 +385,19 @@ class Control_Unit(SO_Control_Unit):
                     print("The car changed its lane from 3 to 2.")
             else:
                 print("The cars are on different lanes, no action has been taken.")
+        else:
+            if veh.lane == car.lane:
+                if veh.velocity =< car.velocity:
+                    print("The car is so slow to pose a threat.")  # It is on the same lane, but slower than our car.
+                else:
+                    if car.lane == 1:
+                        print("The car is already on the slowest lane. So, no actions are taken.")
+                    elif car.lane == 2:
+                        car.lane = 1
+                        print("The car changed its lane from 2 to 1.")
+                    else:
+                        car.lane = 2
+                        print("The car changed its lane from 3 to 2.")
         main_menu()
 
     def eval_obs(self, obs):

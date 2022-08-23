@@ -16,6 +16,15 @@
 
 A use case diagram, sequence diagrams, an activity diagram, a state transition diagram, and a class diagram were prepared in the design phase. Please check out the project design document from here: https://github.com/etKing666/eportfolio/blob/main/files/System%20Design%20v1.0.pdf
 
+### Data Structures
+
+As pointed out in the project design document, the main data structures used in the project are:
+
+1. Lists: Lists are used to simulate databases to store detected obstacles or vehicles.
+2. Dictionaries: Dictionaries are used to store predefined types of objects in a key:pair format, such as traffic sign or vehicle types.
+3. Sets: Sets are mainly used for membership testing (e.g. checking if the username already exists in the user database).
+4. Stacks: The car log is designed as a stack. It displays the most recent message first and goes through the older ones.
+
 ### Interfaces and Classes
 
 ### Objects and the Information Flow

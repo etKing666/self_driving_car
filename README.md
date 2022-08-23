@@ -2,7 +2,19 @@
 
 ## Introduction
 
+Smart Car Information and Interaction System (SCIIS) is a program aimed to simulate the behaviour of a driverless car which intreracts with its environment (e.g. other vehicles, traffic signs and obstacles on the road).  
+
 ## Usage
+
+The program relies on a textual interface. The user can get information or interact with the car using menus. The user lands on the login screen when the program is run. In order to keep the process simple, only username is required to login to the system (no password is needed). After successful login, user can navigate between the main menu, interaction menu and information menu.
+
+### Assumptions
+
+The program is developed on following assumptions:
+
+1. For the sake of simplicty, only two directions for travel are accepted: North (N) and South (S).
+2. The car is projected to travel in a three-lane road where the rightmost lane is the slowest one.
+3. The lanes are open for opposite-side traffic (e.g. a car can come from the opposite direction).
 
 ## Features
 
@@ -19,7 +31,7 @@ The main features of the program are:
 
 1. Start and stop the car
 2. Increase and decrease the speed of the car
-3. Make a U-turn
+3. Make a U-turn (from North to South or vice-versa)
 4. Place an obstacle on the road
 5. Put a traffic sign
 6. Instantiate a car in the environment
@@ -40,7 +52,7 @@ As pointed out in the project design document, the main data structures used in 
 3. Sets: Sets are mainly used for membership testing (e.g. checking if the username already exists in the user database).
 4. Stacks: The car log is designed as a stack. It displays the most recent message first and goes through the older ones.
 
-### External modules
+### External Modules
 
 The external modules used in the project are as follows:
 
@@ -51,7 +63,7 @@ The external modules used in the project are as follows:
 
 ### Interfaces and Classes
 
-In order to provide a blueprint for the classes that would be used in the program, the abstract classes were designed. The abstract classes doesn't include any implementation (their methods raise NotImplementedError) and all methods are decorated with abstractmethod decorator. In order to make sure that the interfaces are followed strictly extra attention was paid to override all methods of abstract classes when designing classes.  
+In order to provide a blueprint for the classes that would be used in the program, the abstract classes were designed. The abstract classes doesn't include any implementation (their methods raise NotImplementedError) and all methods are decorated with abstractmethod decorator. In order to make sure that the interfaces are followed strictly, extra attention was paid to override all methods of abstract classes when designing classes. Moreover, getter and setter methods were used to access and manipulate the attributes of the classes from outside of the object.
 
 ### Objects and the Information Flow
 
@@ -67,5 +79,5 @@ Temporary objects are created in run time. For example, an Obstacle object is in
 
 The most important function of the temporary objects are encapsulating information. For example, instead of passing vehicle's type, speed, lane and direction individually to control unit for evaluation, all data is encapsulated in an object and passed as such.
 
-## Queries
+## Testing
 

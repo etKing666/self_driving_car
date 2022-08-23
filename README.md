@@ -6,9 +6,24 @@
 
 ## Features
 
+The main features of the program are:
+
 ### Information Features
 
+1. Check the current status of the car
+2. Check the car log
+3. Print out the user list
+4. Print out the list of obstacles and vehicles 
+
 ### Interactive Features
+
+1. Start and stop the car
+2. Increase and decrease the speed of the car
+3. Make a U-turn
+4. Place an obstacle on the road
+5. Put a traffic sign
+6. Instantiate a car in the environment
+7. Add, delete and change user
 
 ## Development Methodology
 
@@ -25,7 +40,18 @@ As pointed out in the project design document, the main data structures used in 
 3. Sets: Sets are mainly used for membership testing (e.g. checking if the username already exists in the user database).
 4. Stacks: The car log is designed as a stack. It displays the most recent message first and goes through the older ones.
 
+### External modules
+
+The external modules used in the project are as follows:
+
+1. abc (ABC class and abstractmethod decorator): This class and decorator are used to design the abstract classes and abstract methods.
+2. time (sleep() function): The sleep function is used to pause the interface for a moment so that the output is more readable.
+3. sys (exit() function): exit function is used to exit the system whenever the user wants. 
+4. datetime (datetime): datetime is used to create a timestamp for the car log and detected obstacles database. 
+
 ### Interfaces and Classes
+
+In order to provide a blueprint for the classes that would be used in the program, the abstract classes were designed. The abstract classes doesn't include any implementation (their methods raise NotImplementedError) and all methods are decorated with abstractmethod decorator. In order to make sure that the interfaces are followed strictly extra attention was paid to override all methods of abstract classes when designing classes.  
 
 ### Objects and the Information Flow
 

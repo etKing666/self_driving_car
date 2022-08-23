@@ -18,8 +18,6 @@ The program is developed on following assumptions:
 
 ## Features
 
-The main features of the program are:
-
 ### Information Features
 
 1. Check the current status of the car
@@ -31,10 +29,10 @@ The main features of the program are:
 
 1. Start and stop the car
 2. Increase and decrease the speed of the car
-3. Make a U-turn (from North to South or vice-versa)
-4. Place an obstacle on the road
+3. Change directions
+4. Place an obstacle
 5. Put a traffic sign
-6. Instantiate a car in the environment
+6. Instantiate a car
 7. Add, delete and change user
 
 ## Development Methodology
@@ -45,12 +43,7 @@ A use case diagram, sequence diagrams, an activity diagram, a state transition d
 
 ### Data Structures
 
-As pointed out in the project design document, the main data structures used in the project are:
-
-1. Lists: Lists are used to simulate databases to store detected obstacles or vehicles.
-2. Dictionaries: Dictionaries are used to store predefined types of objects in a key:pair format, such as traffic sign or vehicle types.
-3. Sets: Sets are mainly used for membership testing (e.g. checking if the username already exists in the user database).
-4. Stacks: The car log is designed as a stack. It displays the most recent message first and goes through the older ones.
+As pointed out in the project design document, the main data structures used in the project are lists, dictionaries, sets and stacks.
 
 ### External Modules
 

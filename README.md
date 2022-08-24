@@ -18,7 +18,7 @@ The program is developed on following assumptions:
 
 ## Features
 
-### Information Features
+### Informational Features
 
 1. Check the current status of the car
 2. Check the car log
@@ -39,7 +39,7 @@ The program is developed on following assumptions:
 
 ### Design and UML Models
 
-A use case diagram, sequence diagrams, an activity diagram, a state transition diagram, and a class diagram were prepared in the design phase. Please check out the project design document from here: https://github.com/etKing666/eportfolio/blob/main/files/System%20Design%20v1.0.pdf
+Please check out the project design document from here: https://github.com/etKing666/eportfolio/blob/main/files/System%20Design%20v1.0.pdf
 
 ### Data Structures
 
@@ -49,10 +49,10 @@ As pointed out in the project design document, the main data structures used in 
 
 The external modules used in the project are as follows:
 
-1. abc (ABC class and abstractmethod decorator): This class and decorator are used to design the abstract classes and abstract methods.
+1. abc (ABC class and abstractmethod decorator): This class and the decorator are used to design the abstract classes and abstract methods.
 2. time (sleep() function): The sleep function is used to pause the interface for a moment so that the output is more readable.
-3. sys (exit() function): exit function is used to exit the system whenever the user wants. 
-4. datetime (datetime): datetime is used to create a timestamp for the car log and detected obstacles database. 
+3. sys (exit() function): exit() function is used to exit the system whenever the user wants. 
+4. datetime (datetime): datetime() is used to create a timestamp for the car log and detected obstacles database. 
 
 ### Interfaces and Classes
 

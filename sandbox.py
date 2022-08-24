@@ -1,7 +1,9 @@
-from datetime import datetime
+def factorial (x)
+    if x == 1:
+        return 1
 
-time_now = datetime.now()
-timestamp = time_now.strftime("%d/%m/%Y %H:%M:%S")
+    else:
+        return (x * factorial(x-1))
 
-print(timestamp)
-
+num = 3
+print("The factorial of", num, "is", factorial(num))

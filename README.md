@@ -1,20 +1,20 @@
-# Smart Car Information and Interaction System
+# Smart Car Information and Interaction System (SCIIS)
 
 ## Introduction
 
-Smart Car Information and Interaction System (SCIIS) is a program aimed to simulate the behaviour of a driverless car which intreracts with its environment (e.g. other vehicles, traffic signs and obstacles on the road).  
+SCIIS is a program aimed to simulate the behaviour of a driverless car which interacts with its environment.  
 
 ## Usage
 
-The program relies on a textual interface. The user can get information or interact with the car using menus. The user lands on the login screen when the program is run. In order to keep the process simple, only username is required to login to the system (no password is needed). After successful login, user can navigate between the main menu, interaction menu and information menu.
+The program relies on a textual interface. The user lands on the login screen when the program is run. In order to keep the process simple, only username is required to log in to the system (no password is needed). After successful login, user can navigate between the main menu, interaction menu and information menu.
 
 ### Assumptions
 
 The program is developed on following assumptions:
 
-1. For the sake of simplicty, only two directions for travel are accepted: North (N) and South (S).
+1. For the sake of simplicity, only two directions for travel are accepted: North (N) and South (S).
 2. The car is projected to travel in a three-lane road where the rightmost lane is the slowest one.
-3. The lanes are open for opposite-side traffic (e.g. a car can come from the opposite direction).
+3. The road is open for two-way traffic.
 
 ## Features
 
@@ -22,8 +22,7 @@ The program is developed on following assumptions:
 
 1. Check the current status of the car
 2. Check the car log
-3. Print out the user list
-4. Print out the list of obstacles and vehicles 
+3. Print out the list of users, obstacles and vehicles
 
 ### Interactive Features
 
@@ -33,17 +32,17 @@ The program is developed on following assumptions:
 4. Place an obstacle
 5. Put a traffic sign
 6. Instantiate a car
-7. Add, delete and change user
+7. Add, delete or change user
 
 ## Development Methodology
 
 ### Design and UML Models
 
-Please check out the project design document from here: https://github.com/etKing666/eportfolio/blob/main/files/System%20Design%20v1.0.pdf
+Project design document can be accessed from [here](https://github.com/etKing666/eportfolio/blob/main/files/System%20Design%20v1.0.pdf).
 
 ### Data Structures
 
-As pointed out in the project design document, the main data structures used in the project are lists, dictionaries, sets and stacks.
+As pointed out in the project design document, the main data structures used in the project are lists, dictionaries, queues, sets and stacks.
 
 ### External Modules
 
@@ -64,7 +63,7 @@ There are two different kinds of objects that are used in the project:
 
 #### Permanent Objects
 
-These objects are created in compile time. For example, car, control unit, LiDAR, Traffic Sign Recognition System and V2V Communication Module are permanent objects and they live as long as the program runs. Because of this, in order to pass information to these objects, direct reference to object methods are used in the method definitions of classes.
+These objects are created in compile time. For example, car, control unit, LiDAR, Traffic Sign Recognition System and V2V Communication Module are permanent objects, and they live as long as the program runs. Because of this, in order to pass information to these objects, direct reference to object methods are used in the method definitions of classes.
 
 #### Temporary Objects
 
@@ -74,3 +73,6 @@ The most important function of the temporary objects are encapsulating informati
 
 ## Testing
 
+During the development process, unit tests was used extensively in order to make sure that each component works properly. Once all components are developed, integration and functional tests were employed to test full functionality. Pylint was also used to identify defects in the code.
+
+The test cases can be found here. 

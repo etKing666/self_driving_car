@@ -786,7 +786,7 @@ Your selection [1-3]: """))
 
 class TSRS(Sign_Recognition_System):
     """The component which detects traffic signs and sends traffic sign data to the Control Unit for evaluation."""
-    def __init__(self, sign_code=None, sign=None):
+    def __init__(self, sign_code=None):
         self._sign_code = sign_code
 
     def detect_sign(self):
@@ -807,7 +807,6 @@ class TSRS(Sign_Recognition_System):
                 sleep(1)
             else:
                 return self.sign_code
-                break
 
     def check_db(self, code):
         return sign_db.check_sign(code)
@@ -868,12 +867,12 @@ sign_recog = TSRS()
 
 def user_login():
     """User login menu. Prompts for username only."""
-    print(25 * "=", "WELCOME TO SMART CAR INFORMATION SYSTEM (SCIIS)", 24 * "=")
+    print(25 * "=", "WELCOME TO SMART CAR INFORMATION AND INTERACTION SYSTEM (SCIIS)", 24 * "=")
     print("""
         Please enter your username to log in to the system.
         """)
     print("")
-    print(97 * "=")
+    print(98 * "=")
     username = input("Username : ")
     control_unit.auth(username)  # Control unit authenticates the user
 
@@ -882,14 +881,14 @@ def main_menu():
     """Main menu on which the user lands upon successful login. It is also possible to change the user using this
     menu."""
     while True:
-        print(30 * "=", "SMART CAR INFORMATION SYSTEM (SCIIS)", 30 * "=")
+        print(30 * "=", "SMART CAR INFORMATION AND INTERACTION SYSTEM (SCIIS)", 30 * "=")
         print("""
         1. Get information about the car
         2. Interact with the car
         3. Change user
         4. Exit
         """)
-        print(97 * "=")
+        print(112 * "=")
         try:
             choice = int(input("Please make your choice [1-3] : "))
             if choice == 1:
@@ -912,7 +911,7 @@ def main_menu():
 def inf_menu():
     """The Information Menu is where the user can access information about the car."""
     while True:
-        print(30 * "=", "SMART CAR INFORMATION SYSTEM (SCIIS)", 30 * "=")
+        print(30 * "=", "SMART CAR INFORMATION AND INTERACTION SYSTEM (SCIIS)", 30 * "=")
         print("""
         INFORMATION MENU
         
@@ -924,7 +923,7 @@ def inf_menu():
         6. Return to main menu
         7. Exit the system
             """)
-        print(97 * "=")
+        print(112 * "=")
         try:
             choice = int(input("Please make your choice [1-7] : "))
             if choice == 1:
@@ -961,7 +960,7 @@ def inf_menu():
 def interact_menu():
     """Interaction Menu is where user interacts with the car."""
     while True:
-        print(30 * "=", "SMART CAR INFORMATION SYSTEM (SCIIS)", 30 * "=")
+        print(30 * "=", "SMART CAR INFORMATION AND INTERACTION SYSTEM (SCIIS)", 30 * "=")
         print("""
         INTERACTION MENU
     
@@ -978,7 +977,7 @@ def interact_menu():
         11. Return to main menu
         12. Exit the system
             """)
-        print(97 * "=")
+        print(112 * "=")
 
         try:
             choice = int(input("Please make your choice [1-12] : "))

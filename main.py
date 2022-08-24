@@ -868,7 +868,7 @@ sign_recog = TSRS()
 
 def user_login():
     """User login menu. Prompts for username only."""
-    print(25 * "=", "WELCOME TO SMART CAR INFORMATION SYSTEM (SCIS)", 24 * "=")
+    print(25 * "=", "WELCOME TO SMART CAR INFORMATION SYSTEM (SCIIS)", 24 * "=")
     print("""
         Please enter your username to log in to the system.
         """)
@@ -882,7 +882,7 @@ def main_menu():
     """Main menu on which the user lands upon successful login. It is also possible to change the user using this
     menu."""
     while True:
-        print(30 * "=", "SMART CAR INFORMATION SYSTEM (SCIS)", 30 * "=")
+        print(30 * "=", "SMART CAR INFORMATION SYSTEM (SCIIS)", 30 * "=")
         print("""
         1. Get information about the car
         2. Interact with the car
@@ -899,7 +899,7 @@ def main_menu():
             elif choice == 3:
                 user_login()
             elif choice == 4:
-                print("Thank you for using SCIS!")
+                print("Thank you for using SCIIS!")
                 sleep(1)
                 exit()
             else:
@@ -912,7 +912,7 @@ def main_menu():
 def inf_menu():
     """The Information Menu is where the user can access information about the car."""
     while True:
-        print(30 * "=", "SMART CAR INFORMATION SYSTEM (SCIS)", 30 * "=")
+        print(30 * "=", "SMART CAR INFORMATION SYSTEM (SCIIS)", 30 * "=")
         print("""
         INFORMATION MENU
         
@@ -948,7 +948,7 @@ def inf_menu():
             elif choice == 6:
                 main_menu()
             elif choice == 7:
-                print("Thank you for using SCIS!")
+                print("Thank you for using SCIIS!")
                 sleep(2)
                 exit()
             else:
@@ -961,7 +961,7 @@ def inf_menu():
 def interact_menu():
     """Interaction Menu is where user interacts with the car."""
     while True:
-        print(30 * "=", "SMART CAR INFORMATION SYSTEM (SCIS)", 30 * "=")
+        print(30 * "=", "SMART CAR INFORMATION SYSTEM (SCIIS)", 30 * "=")
         print("""
         INTERACTION MENU
     
@@ -971,7 +971,7 @@ def interact_menu():
         4. Change direction (U-turn)
         5. Place an obstacle on the road
         6. Put a traffic sign
-        7. Place a car on the road
+        7. Instantiate a car
         8. Stop the car
         9. Add a user
         10. Delete a user
@@ -1018,7 +1018,7 @@ def interact_menu():
                 main_menu()
                 sleep(1)
             elif choice == 12:
-                print("Thank you for using SCIS!")
+                print("Thank you for using SCIIS!")
                 sleep(1)
                 exit()
             else:

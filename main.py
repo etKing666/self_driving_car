@@ -972,7 +972,7 @@ def user_login():
         Please enter your username to log in to the system.
         """)
     print("")
-    print(98 * "=")
+    print(114 * "=")
     username = input("Username : ")
     control_unit.auth(username)  # Control unit authenticates the user
 
@@ -988,7 +988,7 @@ def main_menu():
         3. Change user
         4. Exit
         """)
-        print(112 * "=")
+        print(114 * "=")
         try:
             choice = int(input("Please make your choice [1-3] : "))
             if choice == 1:
@@ -1023,7 +1023,7 @@ def inf_menu():
         6. Return to main menu
         7. Exit the system
             """)
-        print(112 * "=")
+        print(114 * "=")
         try:
             choice = int(input("Please make your choice [1-7] : "))
             if choice == 1:
@@ -1078,7 +1078,7 @@ def interact_menu():
         12. Return to main menu
         13. Exit the system
             """)
-        print(112 * "=")
+        print(114 * "=")
 
         try:
             choice = int(input("Please make your choice [1-12] : "))

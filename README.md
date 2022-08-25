@@ -77,4 +77,4 @@ The most important function of the temporary objects are encapsulating informati
 
 During the development process, unit tests was used extensively in order to make sure that each component works properly. Once all components are developed, integration and functional tests were employed to test full functionality. Pylint was also used to identify defects in the code.
 
-The test cases can be found here. 
+The test cases can be found [here](test_cases.md). 

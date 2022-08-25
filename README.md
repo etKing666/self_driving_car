@@ -6,13 +6,15 @@ SCIIS is a program aimed to simulate the behaviour of a driverless car which int
 
 ## Usage
 
-The program relies on a textual interface. The user lands on the login screen when the program is run. In order to keep the process simple, only username is required to log in to the system (no password is needed). After successful login, user can navigate between the main menu, interaction menu and information menu.
+The program relies on a textual interface. The user lands on the login screen when the program is run. For simplicty, only username is required to log in to the system (no password is needed). After successful login, user can navigate between the various menus.
+
+The default username is 'admin'. Additional usernames can be created later in the program.
 
 ### Assumptions
 
 The program is developed on following assumptions:
 
-1. For the sake of simplicity, only two directions for travel are accepted: North (N) and South (S).
+1. For the sake of simplicity, only two directions of travel are accepted: North (N) and South (S).
 2. The car is projected to travel in a three-lane road where the rightmost lane is the slowest one.
 3. The road is open for two-way traffic.
 
@@ -27,8 +29,8 @@ The program is developed on following assumptions:
 ### Interactive Features
 
 1. Start and stop the car
-2. Increase and decrease the speed of the car
-3. Change directions
+2. Increase and decrease the car speed 
+3. Change direction and lane of the car
 4. Place an obstacle
 5. Put a traffic sign
 6. Instantiate a car
@@ -42,7 +44,7 @@ Project design document can be accessed from [here](https://github.com/etKing666
 
 ### Data Structures
 
-As pointed out in the project design document, the main data structures used in the project are lists, dictionaries, queues, sets and stacks.
+As pointed out in the design document, the main data structures used in the project are lists, dictionaries, queues, sets and stacks.
 
 ### External Modules
 

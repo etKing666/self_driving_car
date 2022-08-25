@@ -43,6 +43,10 @@ class SO_Control_Unit(ABC):
         raise NotImplementedError
 
     @abstractmethod
+    def change_lane(self):
+        raise NotImplementedError
+
+    @abstractmethod
     def stop(self):
         raise NotImplementedError
 
@@ -104,6 +108,7 @@ class SO_Control_Unit(ABC):
 
 
 class Smart_Vehicle(ABC):
+    """The abstract class which provides an interface for the car and the vehicles in the system."""
     def __init__(self, type, direction, lane, velocity=0):
         self._type = type
         self._velocity = velocity
@@ -152,6 +157,7 @@ class Smart_Vehicle(ABC):
 
 
 class Sensor(ABC):
+    """The abstract base class that provides an interface for the LiDAR."""
     def __init__(self, types, obstacle=None):
         self._types = types
         self._obstacle = obstacle  # A list to store the information about the detected obstacle
@@ -171,6 +177,7 @@ class Sensor(ABC):
 
 
 class Comms_Module(ABC):
+    """The abstract class for communication module used in the system."""
     def __init__(self, veh_types=None, vehicles=None):
         veh_types = {}
         vehicles = []
@@ -193,6 +200,7 @@ class Comms_Module(ABC):
 
 
 class Obstacles(ABC):
+    """An abstract base class for the obstacles."""
     def __init__(self, type, lane, timestamp):
         self._type = type  # Type of obstacle as evaluated by Lidar
         self._lane = lane  # Refers to the lane on the road where the obstacle is located
@@ -215,6 +223,7 @@ class Obstacles(ABC):
 
 
 class System_User(ABC):
+    """The abstract class for the system user."""
     def __init__(self, name, surname, username):
         self._name = name
         self._surname = surname
@@ -232,6 +241,7 @@ class System_User(ABC):
 
 
 class Sign_Recognition_System(ABC):
+    """Sign recognition system abstract class."""
     def __init__(self, sign_data):
         self._sign_data = sign_data
 
@@ -249,6 +259,7 @@ class Sign_Recognition_System(ABC):
 
 
 class T_Sign(ABC):
+    """Traffic sign abstract class."""
     def __init__(self, type):
         self._type = type
 
@@ -284,10 +295,8 @@ class Sign_DB(ABC):
 # Creating classes:
 
 class Vehicle(Smart_Vehicle):
-    """
-    A vehicle superclass which is instantiated by vehicle objects and subclassed by the car class.
-    It only has four attributes and no methods other than getter/setter methods.
-    """
+    """A vehicle superclass which is instantiated by vehicle objects and subclassed by the car class.
+    It only has four attributes and no methods other than getter/setter methods."""
     def __init__(self, type, direction, lane, velocity=0):
         self._type = type
         self._velocity = velocity
@@ -337,17 +346,16 @@ class Car(Vehicle):
 
 
 class Control_Unit(SO_Control_Unit):
-    """
-    Control unit is the central unit which controls all the interaction between the user and all the components
-    of the car.
-    """
+    """Control unit is the central unit which controls all the interaction between the user and all the components
+    of the car."""
     def __init__(self, users, obstacles=None, status=False, log=None):
         self._users = users
         self._obstacles = []
-        self._status = status
-        self._log = []
+        self._status = status  # A boolean flag to show the status of the car (e.g. activated/not activated)
+        self._log = []  # A list for the car log. It will be used as a stack (the latest message will be read first)
 
     def add_user(self):
+        """Adds a user to the user list."""
         new_user = (input("Please enter the username of the user: "))
         if new_user in self._users:
             print("The username already exists! Returning to the main menu.")
@@ -358,6 +366,7 @@ class Control_Unit(SO_Control_Unit):
             self.update_log(f"The user {new_user} has been added.")
 
     def delete_user(self):
+        """Deletes a user from the user list."""
         del_user = (input("Please enter the username of the user that you want to delete: "))
         if del_user in self._users:
             self._users.remove(del_user)
@@ -368,6 +377,7 @@ class Control_Unit(SO_Control_Unit):
             self.update_log("Tried to delete a user. The user doesn't exist.")
 
     def auth(self, login):
+        """ Authenticates the user. It checks if the username entered by the user is in the user list."""
         if login in control_unit.users:
             print("You are authorized to use the system!\n")
             self.update_log(f"The user '{login}' has been authorized to use the system.")
@@ -380,6 +390,7 @@ class Control_Unit(SO_Control_Unit):
             exit()
 
     def start_car(self, vehicle):
+        """Activates the car by setting the status flag True."""
         if self.status:
             print("\nThe car has already been started. It is not possible to start it again.\n")
             sleep(1)
@@ -392,18 +403,20 @@ class Control_Unit(SO_Control_Unit):
         interact_menu()
 
     def accelerate(self, vehicle):
-        if not self.status:
-            print("\nThe car is not activated. Turn on the car first to accelerate.\n")
-            self.update_log("Attempted to accelerate the car. The car is not activated.")
+        """Accelerates the car by 10 km/h at a time."""
+        if not self.status:  # Checks if the car is already activated.
+            print("\nThe car is not activated. Please activate the car first.\n")
+            self.update_log("Attempted to change the direction without activating the car. No action is taken.")
         else:
             vehicle.velocity += 10
             print(f"\nThe car has been accelerated. The car's speed is set to {vehicle.velocity} km/h.\n")
             self.update_log(f"The car has been accelerated. The car's speed is set to {vehicle.velocity} km/h.")
 
     def brake(self, vehicle):
-        if not self.status:
-            print("\nThe car is not activated. Turn on the car first to brake.\n")
-            self.update_log("Attempted to slow down the car. The car is not activated.")
+        """Reduces the car speed by 10 km/h at a time."""
+        if not self.status:  # Checks if the car is already activated.
+            print("\nThe car is not activated. Please activate the car first.\n")
+            self.update_log("Attempted to slow down without activating the car. No action is taken.")
         else:
             if vehicle.velocity == 0:
                 print("\nThe car is stopped already. It is not possible to reduce the speed.\n")
@@ -414,19 +427,71 @@ class Control_Unit(SO_Control_Unit):
                 self.update_log(f"The car's speed has been reduced. The car's speed is set to {vehicle.velocity} km/h.")
 
     def change_direction(self):
-        if car.direction == "N":
-            car.direction = "S"
-            print(f"\nThe car's direction has been changed. New direction is: {car.direction}\n")
-            self.update_log(f"The car's direction has been changed. New direction is: {car.direction}.")
-            sleep(1)
+        """Changes the driection of the car (N to S or S to N). REMEMBER: Only valid directions are North (N) and South (S)."""
+        if not self.status:  # Checks if the car is already activated.
+            print("\nThe car is not activated. Please activate the car first.\n")
+            self.update_log("Attempted to change the direction without activating the car. No action is taken.")
         else:
-            car.direction ="N"
-            print(f"\nThe car's direction has been changed. New direction is: {car.direction}\n")
-            self.update_log(f"The car's direction has been changed. New direction is: {car.direction}.")
-            sleep(1)
+            if car.direction == "N":
+                car.direction = "S"
+                print(f"\nThe car's direction has been changed. New direction is: {car.direction}\n")
+                self.update_log(f"The car's direction has been changed. New direction is: {car.direction}.")
+                sleep(1)
+            else:
+                car.direction ="N"
+                print(f"\nThe car's direction has been changed. New direction is: {car.direction}\n")
+                self.update_log(f"The car's direction has been changed. New direction is: {car.direction}.")
+                sleep(1)
+
+    def change_lane(self):
+        """Changes the lane of the car. REMEMBER: There are three lanes and the car starts from the lane 1. Lane 1 is
+        the slowest lane and the Lane 3 is the fastest one."""
+        if not self.status:  # Checks if the car is already activated.
+            print("\nThe car is not activated. Please activate the car first.\n")
+            self.update_log("Attempted to change the lane without activating the car. No action is taken.")
+        else:
+            try:
+                if car.lane == 1:
+                    new_lane = int(input("""\nPlease enter 2 if you want to change lane to Lane 2 or enter 0 to go back to the interaction menu.
+Your choice [0 or 2]: """))
+                    if new_lane == 2:
+                        car.lane = 2
+                        print(f"\nThe car changed its lane to Lane {car.lane}.\n")
+                        self.update_log(f"The car's lane has been changed. New lane is: {car.lane}.")
+                        sleep(1)
+                    elif new_lane == 0:
+                        interact_menu()
+                elif car.lane == 2:
+                    new_lane = int(input(f"""\nThe car is on lane {car.lane}. Please enter the lane that you'd like the car to switch to [1 or 3] or enter 0 to go back to the interaction menu.
+Your choice [1 or 3]: """))
+                    if new_lane == 1:
+                        car.lane = 1
+                        print(f"\nThe car changed its lane to Lane {car.lane}.\n")
+                        self.update_log(f"The car's lane has been changed. New lane is: {car.lane}.")
+                        sleep(1)
+                    elif new_lane == 3:
+                        car.lane = 3
+                        print(f"\nThe car changed its lane to Lane {car.lane}.\n")
+                        self.update_log(f"The car's lane has been changed. New lane is: {car.lane}.")
+                        sleep(1)
+                    elif new_lane == 0:
+                        interact_menu()
+                elif car.lane == 3:
+                    new_lane = int(input("""\nPlease enter 2 if you want to change lane to Lane 2 or enter 0 to go back to the interaction menu.
+Your choice [0 or 2]: """))
+                    if new_lane == 2:
+                        car.lane = 2
+                        print(f"\nThe car changed its lane to Lane {car.lane}.\n")
+                        self.update_log(f"The car's lane has been changed. New lane is: {car.lane}.")
+                        sleep(1)
+                    elif new_lane == 0:
+                        interact_menu()
+            except:
+                print("Please make a valid choice.")
 
     def stop(self, vehicle):
-        if not self._status:
+        """Deactivates the car by setting the status flag False."""
+        if not self._status:  # Checks if the car is already activated.
             print("\nThe car is not activated. It is not possible to stop the car.\n")
             self.update_log("Attempted to stop the car. The car is not activated.")
         else:
@@ -441,6 +506,7 @@ class Control_Unit(SO_Control_Unit):
                 sleep(1)
 
     def eval_sign(self, sign):
+        """Evaluates the sign received from the TSRS and takes the necessary action."""
         # Unpacking the object attributes to variables for easier processing
         code = sign.type
         desc = sign.desc
@@ -489,6 +555,7 @@ class Control_Unit(SO_Control_Unit):
         # No corner cases are included here, as the input is already checked for validity via try/except statements.
 
     def eval_veh(self, veh):
+        """Evaluates the vehicle detected by V2V Comms module and takes the necessary action."""
         # Compares the car's information against the vehicle detected
         if veh.direction != car.direction:  # If the vehicle and the car travel in opposite directions
             if veh.lane == car.lane:  # If they are approaching to each other on the same lane
@@ -534,6 +601,7 @@ class Control_Unit(SO_Control_Unit):
                 self.update_log(f"A vehicle (Lane: {veh.lane} Direction: {veh.direction}) detected. No action is taken (different lane).")
 
     def eval_obs(self, obstacle):
+        """Evaluates the obstacle detected by the LiDAR and takes the necessary action."""
         self.add_obstacles(obstacle)  # Adds the obstacle to the obstacle list
         if car.lane == obstacle.lane:
             if car.lane == 1:
@@ -577,6 +645,7 @@ class Control_Unit(SO_Control_Unit):
         self._obstacles.append(obstacle)
 
     def list_obstacles(self):
+        """Lists the list of obstacles detected so far by LiDAR."""
         print("\n", 30 * "=", "DETECTED OBSTACLES", 30 * "=", "\n")
         print("{:<30} {:<18} {:<30}".format('DETECTED OBSTACLE', 'LANE', 'DATE AND TIME'))
         for obstacle in self._obstacles:
@@ -584,12 +653,14 @@ class Control_Unit(SO_Control_Unit):
         print("\n", 78 * "=", "\n")
 
     def update_log(self, text):
-       # Calculating timestamp
+        """Updates the car log."""
+        # Calculating timestamp
         time_now = datetime.now()
         timestamp = time_now.strftime("%d/%m/%Y %H:%M:%S")
         self._log.append([text, timestamp])  # Adding the message with timestamp
 
     def read_log(self):
+        """Reads the car log. REMEMBER: It works as a stack: The latest message will be read first and will be deleted from the log."""
         print("\n", 30 * "=", "CAR LOG (starting from the most recent incident):", 30 * "=", "\n")
         print("{:<84} {:<25}".format('INCIDENT', 'DATE AND TIME'))
         while len(self._log) > 0:
@@ -678,10 +749,8 @@ class Obstacle(Obstacles):
         return self._timestamp
 
 class V2V_Comms(Comms_Module):
-    """
-    The component which detects the other vehicles in the environment. It sends vehicle data to the Control Unit
-    for evaluation.
-    """
+    """The component which detects the other vehicles in the environment. It sends vehicle data to the Control Unit
+    for evaluation."""
     def __init__(self, veh_types=None, vehicles=None):
         self._veh_types = {1: 'Car', 2: 'Van', 3: 'SUV', 4: 'Truck', 5: 'Trailer'}
         self._vehicles = []
@@ -772,9 +841,11 @@ Your selection [1-3]: """))
         self.send_data(vehicle)
 
     def update_db(self, veh):
+        """Updates the vehicle DB."""
         self._vehicles.append(veh)
 
     def list_vehicles(self):
+        """Lists the list of detected vehicles so far by the V2V Comms module."""
         print("\n", 30 * "=", "DETECTED VEHICLES", 31 * "=", "\n")
         print("{:<33} {:<15} {:<15} {:<15}".format('DETECTED VEHICLE', 'DIRECTION', 'LANE', 'VELOCITY'))
         for vehicle in self._vehicles:
@@ -809,9 +880,11 @@ class TSRS(Sign_Recognition_System):
                 return self.sign_code
 
     def check_db(self, code):
+        """Checks the traffic sign database. Sends the code and retrieves the description of the sign from the database."""
         return sign_db.check_sign(code)
 
     def send_data(self, sign_code, sign_desc):
+        """Sends the traffic sign data to the control unit for evaluation."""
         traffic_sign = Traffic_Sign(sign_code, sign_desc)
         control_unit.eval_sign(traffic_sign)
 
@@ -820,10 +893,8 @@ class TSRS(Sign_Recognition_System):
         return self._sign_code
 
 class Traffic_Sign(T_Sign):
-    """
-    The class that is instantiated for each traffic sign and which stores the information for each traffic sign
-    detected. It only has attributes and setter/getter methods.
-    """
+    """The class that is instantiated for each traffic sign and which stores the information for each traffic sign
+    detected. It only has attributes and setter/getter methods."""
     def __init__(self, type=None, desc=None):
         self._type = type
         self._desc = desc
@@ -852,6 +923,7 @@ class TMA_DB(Sign_DB):
                        5: 'Minimum Speed Limit (60 km/h)'}
 
     def check_sign(self, code):
+        """Receives the sign code and returns the description of the traffic sign."""
         return self._signs.get(code)
 
 # Creating permanent objects
@@ -930,10 +1002,10 @@ def inf_menu():
                 print("")
                 car.print_state()
                 print("")
-                sleep(1)
+                sleep(2)
             elif choice == 2:
                 control_unit.read_log()
-                sleep(1)
+                sleep(2)
             elif choice == 3:
                 print("\nThe current authorized users of the system:")
                 for name in control_unit.users:
@@ -971,11 +1043,12 @@ def interact_menu():
         5. Place an obstacle on the road
         6. Put a traffic sign
         7. Instantiate a car
-        8. Stop the car
-        9. Add a user
-        10. Delete a user
-        11. Return to main menu
-        12. Exit the system
+        8. Change lane
+        9. Stop the car
+        10. Add a user
+        11. Delete a user
+        12. Return to main menu
+        13. Exit the system
             """)
         print(112 * "=")
 
@@ -1005,26 +1078,29 @@ def interact_menu():
                 v2vcomms.get_data()
                 sleep(1)
             elif choice == 8:
-                control_unit.stop(car)
+                control_unit.change_lane()
                 sleep(1)
             elif choice == 9:
-                control_unit.add_user()
+                control_unit.stop(car)
                 sleep(1)
             elif choice == 10:
-                control_unit.delete_user()
+                control_unit.add_user()
                 sleep(1)
             elif choice == 11:
-                main_menu()
+                control_unit.delete_user()
                 sleep(1)
             elif choice == 12:
-                print("Thank you for using SCIIS!")
+                main_menu()
+                sleep(1)
+            elif choice == 13:
+                print("\nThank you for using SCIIS!")
                 sleep(1)
                 exit()
             else:
-                print("You have entered an invalid choice. Please try again.")
+                print("\nYou have entered an invalid choice. Please try again.")
                 sleep(1)
         except ValueError:
-            print("Invalid input. Please provide a valid input [1-12]")
+            print("\nInvalid input. Please provide a valid input [1-12]")
             sleep(1)
 
 user_login()

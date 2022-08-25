@@ -8,11 +8,12 @@ from datetime import datetime
 class SO_Control_Unit(ABC):
     """Control unit stores all the critical information and manages the car."""
 
-    def __init__(self, users, obstacles=None, status=False, log=None):
+    def __init__(self, users, obstacles=None, status=False, log=None, active_user=None):
         self._users = users
         self._obstacles = []
-        self._log = log
+        self._log = []
         self._status = status
+        self._active_user = active_user
 
     @abstractmethod
     def add_user(self):
@@ -88,6 +89,16 @@ class SO_Control_Unit(ABC):
     @property
     @abstractmethod
     def obstacles(self):
+        raise NotImplementedError
+
+    @property
+    @abstractmethod
+    def active_user(self):
+        raise NotImplementedError
+
+    @active_user.setter
+    @abstractmethod
+    def active_user(self, value):
         raise NotImplementedError
 
     @abstractmethod
@@ -348,39 +359,48 @@ class Car(Vehicle):
 class Control_Unit(SO_Control_Unit):
     """Control unit is the central unit which controls all the interaction between the user and all the components
     of the car."""
-    def __init__(self, users, obstacles=None, status=False, log=None):
+    def __init__(self, users, obstacles=None, status=False, log=None, active_user=None):
         self._users = users
         self._obstacles = []
         self._status = status  # A boolean flag to show the status of the car (e.g. activated/not activated)
         self._log = []  # A list for the car log. It will be used as a stack (the latest message will be read first)
+        self._active_user = None
 
     def add_user(self):
         """Adds a user to the user list."""
-        new_user = (input("Please enter the username of the user: "))
+        new_user = (input("\nPlease enter the username of the user: "))
         if new_user in self._users:
-            print("The username already exists! Returning to the main menu.")
-            self.update_log("Tried to add a new user. The user already exists.")
+            print("\nThe username already exists! Returning to the main menu.")
+            self.update_log("Attempted to add a new user. The user already exists.")
         else:
             self._users.add(new_user)  # Adding username to the user database
-            print("The user has been added! Returning to the main menu.")
+            print("\nThe user has been added! Returning to the main menu.")
             self.update_log(f"The user {new_user} has been added.")
 
     def delete_user(self):
         """Deletes a user from the user list."""
-        del_user = (input("Please enter the username of the user that you want to delete: "))
-        if del_user in self._users:
-            self._users.remove(del_user)
-            print("The username has been deleted from the user database! Returning to the main menu.")
-            self.update_log(f"The user {del_user} has been deleted.")
+        del_user = input("\nPlease enter the username of the user that you want to delete: ")
+        if del_user == self._active_user:
+            print("\nThe user you are trying to delete is the active user! Change the user first to delete this user.\n")
+            self.update_log(f"Attempted to delete the active user '{del_user}'. Request rejected.")
+            sleep(1)
         else:
-            print("This user doesn't exist! Returning to the main menu.")
-            self.update_log("Tried to delete a user. The user doesn't exist.")
+            if del_user in self._users:
+                self._users.remove(del_user)
+                print("\nThe username has been deleted from the user database! Returning to the main menu.\n")
+                self.update_log(f"The user {del_user} has been deleted.")
+                sleep(1)
+            else:
+                print("\nThis user doesn't exist! Returning to the main menu.")
+                self.update_log("Attempted to delete a user. The user doesn't exist.")
+                sleep(1)
 
     def auth(self, login):
         """ Authenticates the user. It checks if the username entered by the user is in the user list."""
         if login in control_unit.users:
             print("You are authorized to use the system!\n")
             self.update_log(f"The user '{login}' has been authorized to use the system.")
+            self.active_user = login
             sleep(1)
             main_menu()
         else:
@@ -640,6 +660,14 @@ Your choice [0 or 2]: """))
     @property
     def obstacles(self):
         return self._obstacles
+
+    @property
+    def active_user(self):
+        return self._active_user
+
+    @active_user.setter
+    def active_user(self, value):
+        self._active_user = value
 
     def add_obstacles(self, obstacle):
         self._obstacles.append(obstacle)

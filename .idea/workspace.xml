@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="1cce05f8-720d-436d-a106-77556baa3379" name="Changes" comment="v.0.20 test cases">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-    </list>
+    <list default="true" id="1cce05f8-720d-436d-a106-77556baa3379" name="Changes" comment="v.1.1" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -105,7 +102,7 @@
       <workItem from="1659857879563" duration="32000" />
       <workItem from="1659857923432" duration="5123000" />
       <workItem from="1661069415332" duration="33499000" />
-      <workItem from="1661363096654" duration="20124000" />
+      <workItem from="1661363096654" duration="20522000" />
     </task>
     <task id="LOCAL-00001" summary="Commit">
       <created>1661069532223</created>
@@ -212,7 +209,21 @@
       <option name="project" value="LOCAL" />
       <updated>1661462767431</updated>
     </task>
-    <option name="localTasksCounter" value="16" />
+    <task id="LOCAL-00016" summary="v.1.0">
+      <created>1661463926570</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1661463926570</updated>
+    </task>
+    <task id="LOCAL-00017" summary="v.1.1">
+      <created>1661464122164</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1661464122164</updated>
+    </task>
+    <option name="localTasksCounter" value="18" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -241,7 +252,9 @@
     <MESSAGE value="v.0.18" />
     <MESSAGE value="v.0.19" />
     <MESSAGE value="v.0.20 test cases" />
-    <option name="LAST_COMMIT_MESSAGE" value="v.0.20 test cases" />
+    <MESSAGE value="v.1.0" />
+    <MESSAGE value="v.1.1" />
+    <option name="LAST_COMMIT_MESSAGE" value="v.1.1" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/self_driving_car$sandbox.coverage" NAME="sandbox Coverage Results" MODIFIED="1661362920975" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />

@@ -1,13 +1,13 @@
 # Test Cases
 
-## Prerequisites
+## Introduction
 
 1. Each test starts with logging in as admin (username: 'admin') and selecting 'Interact with the car' (2)
 2. The steps described in the test steps should be implemented in the given order. The numbers in parentheses indicate the option number in the interaction menu. 
 3. Once all steps are executed, car log should be checked and compared against the desired end state. Car log can be accessed at the Main Menu > Get information about the car (1) > Check car log (2) 
-4. Any discrepancies should be reported to eg22518@essex.ac.uk
+4. Any discrepancies should be reported to the developer at eg22518@essex.ac.uk
 
-## Test Case #1 (Obstacle-oriented)
+## Test Case #1 (Obstacle-oriented) 
 
 ### Description
 
@@ -155,7 +155,7 @@ The user 'admin' has been authorized to use the system.
 ### Description
 
 The aim of this test case is to test the car's own behaviour based on user input. In this test, a couple of user
-error are also incorporated to make sure the corner cases are covered. 
+error are also incorporated to make sure the corner cases are covered (defect testing). 
 
 ### Test steps:
 

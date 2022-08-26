@@ -470,10 +470,10 @@ class Control_Unit(SO_Control_Unit):
             print("\nThe car is not activated. Please activate the car first.\n")
             self.update_log("Attempted to change the lane without activating the car. No action is taken.")
         else:
-            try:
-                if car.lane == 1:
+            if car.lane == 1:
+                try:
                     new_lane = int(input("""\nPlease enter 2 if you want to change lane to Lane 2 or enter 0 to go back to the interaction menu.
-Your choice [0 or 2]: """))
+    Your choice [0 or 2]: """))
                     if new_lane == 2:
                         car.lane = 2
                         print(f"\nThe car changed its lane to Lane {car.lane}.\n")
@@ -481,9 +481,15 @@ Your choice [0 or 2]: """))
                         sleep(1)
                     elif new_lane == 0:
                         interact_menu()
-                elif car.lane == 2:
+                    else:
+                        print("\nPlease enter a valid value [1 or 3]")
+                        self.change_lane()
+                except ValueError:
+                    print("\nPlease provide a valid input.")
+            elif car.lane == 2:
+                try:
                     new_lane = int(input(f"""\nThe car is on lane {car.lane}. Please enter the lane that you'd like the car to switch to [1 or 3] or enter 0 to go back to the interaction menu.
-Your choice [1 or 3]: """))
+    Your choice [1 or 3]: """))
                     if new_lane == 1:
                         car.lane = 1
                         print(f"\nThe car changed its lane to Lane {car.lane}.\n")
@@ -496,9 +502,15 @@ Your choice [1 or 3]: """))
                         sleep(1)
                     elif new_lane == 0:
                         interact_menu()
-                elif car.lane == 3:
+                    else:
+                        print("\nPlease enter a valid value [1 or 3]")
+                        self.change_lane()
+                except ValueError:
+                    print("\nPlease provide a valid input.")
+            elif car.lane == 3:
+                try:
                     new_lane = int(input("""\nPlease enter 2 if you want to change lane to Lane 2 or enter 0 to go back to the interaction menu.
-Your choice [0 or 2]: """))
+    Your choice [0 or 2]: """))
                     if new_lane == 2:
                         car.lane = 2
                         print(f"\nThe car changed its lane to Lane {car.lane}.\n")
@@ -506,8 +518,11 @@ Your choice [0 or 2]: """))
                         sleep(1)
                     elif new_lane == 0:
                         interact_menu()
-            except:
-                print("Please make a valid choice.")
+                    else:
+                        print("\nPlease enter a valid value [1 or 3]")
+                        self.change_lane()
+                except ValueError:
+                    print("\nPlease provide a valid input.")
 
     def stop(self, vehicle):
         """Deactivates the car by setting the status flag False."""
@@ -835,7 +850,7 @@ Your selection [N or S]: """)
                     print("\nPlease make a valid choice [N or S].\n")
                     sleep(1)
                     continue
-            except:
+            except ValueError:
                 print("\nInvalid input. Please make a valid choice [N or S]\n")
                 continue
             else:
@@ -849,7 +864,7 @@ Your selection [1-3]: """))
                     print("\nPlease make a valid choice [1-3]\n")
                     sleep(1)
                     continue
-            except:
+            except ValueError:
                 print("\nInvalid input. Please make a valid choice [1-3]\n")
                 sleep(1)
                 continue

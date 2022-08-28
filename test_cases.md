@@ -1,6 +1,6 @@
 # Test Cases
 
-## Introduction
+## Instructions
 
 1. Each test starts with logging in as admin (username: 'admin') and selecting 'Interact with the car' (2)
 2. The steps described in the test steps should be implemented in the given order. The numbers in parentheses indicate the option number in the interaction menu. 

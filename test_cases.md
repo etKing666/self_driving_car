@@ -11,7 +11,7 @@
 
 ### Description
 
-In this test case, car's behaviour against the different types of obstacles detected is tested. 
+In this test case, car's behaviour against the different types of obstacles detected is tested (validation testing). 
 
 ### Test steps:
 
@@ -61,7 +61,7 @@ The user 'admin' has been authorized to use the system.
 
 ### Description:
 
-The focus of the test case is to test the car's behaviour against a set of traffic signs detected.
+The focus of the test case is to test the car's behaviour against a set of traffic signs detected (validation testing).
 
 ### Test steps:
 
@@ -107,7 +107,7 @@ The user 'admin' has been authorized to use the system.
 
 ## Description:
 
-The aim of the test case #3 is to test the behavior of the car's reaction to various vehicles detected on the road.
+The aim of the test case #3 is to test the behavior of the car's reaction to various vehicles detected on the road (validation testing).
 
 ### Test steps:
 
@@ -192,7 +192,7 @@ The user 'admin' has been authorized to use the system.
 
 ### Description
 
-Test case #5 covers the testing of basic user functionality. 
+Test case #5 covers the testing of basic user functionality (validation testing). 
 
 ### Test steps:
 
@@ -221,7 +221,7 @@ The user 'admin' has been authorized to use the system.
 
 ### Description:
 
-This test case covers a mix of events of various types. 
+This test case covers a mix of events/functions of various types (validation testing). 
 
 ### Test steps:
 

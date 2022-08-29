@@ -8,8 +8,9 @@ from datetime import datetime
 class SO_Control_Unit(ABC):
     """Control unit stores all the critical information and manages the car."""
 
-    def __init__(self, users, obstacles=None, status=False, log=None, active_user=None):
+    def __init__(self, users, userdb=None, obstacles=None, status=False, log=None, active_user=None):
         self._users = users
+        self._userdb = []
         self._obstacles = []
         self._log = []
         self._status = status
@@ -17,6 +18,10 @@ class SO_Control_Unit(ABC):
 
     @abstractmethod
     def add_user(self):
+        raise NotImplementedError
+
+    @abstractmethod
+    def list_users(self):
         raise NotImplementedError
 
     @abstractmethod
@@ -247,6 +252,16 @@ class System_User(ABC):
 
     @property
     @abstractmethod
+    def name(self):
+        return self._name
+
+    @property
+    @abstractmethod
+    def surname(self):
+        return self._surname
+
+    @property
+    @abstractmethod
     def username(self):
         raise NotImplementedError
 
@@ -359,23 +374,43 @@ class Car(Vehicle):
 class Control_Unit(SO_Control_Unit):
     """Control unit is the central unit which controls all the interaction between the user and all the components
     of the car."""
-    def __init__(self, users, obstacles=None, status=False, log=None, active_user=None):
-        self._users = users
+    def __init__(self, admin, userdb=None, users=None, obstacles=None, status=False, log=None, active_user=None):
+        self._admin = admin
+        self._userdb = []
+        self._users = {admin.username}  # Adds username of the admin to the users set.
+        self._userdb = []
         self._obstacles = []
         self._status = status  # A boolean flag to show the status of the car (e.g. activated/not activated)
         self._log = []  # A list for the car log. It will be used as a stack (the latest message will be read first)
         self._active_user = None
 
+        self._userdb.append(admin) # Adds admin user to the user database where all User objects are stored
+
     def add_user(self):
         """Adds a user to the user list."""
-        new_user = (input("\nPlease enter the username of the user: "))
-        if new_user in self._users:
+        new_name = (input("\nPlease enter the name of the user: "))
+        new_surname = (input("Please enter the username of the user: "))
+        new_username = (input("Please enter the username of the user: "))
+
+        # Creating a new user object and adding it to the user database
+        self._userdb.append(User(new_name, new_surname, new_username))
+
+        # Adding username to the user list
+        if new_username in self._users:
             print("\nThe username already exists! Returning to the main menu.")
             self.update_log("Attempted to add a new user. The user already exists.")
         else:
-            self._users.add(new_user)  # Adding username to the user database
+            self._users.add(new_username)  # Adding username to the user database
             print("\nThe user has been added! Returning to the main menu.")
-            self.update_log(f"The user {new_user} has been added.")
+            self.update_log(f"The user '{new_username}' has been added.")
+
+    def list_users(self):
+        print("\n", 30 * "=", "THE CURRENT AUTHORIZED USERS OF THE SYSTEM", 30 * "=", "\n")
+        print("{:<40} {:<28} {:<40}".format('NAME', 'SURNAME', 'USERNAME'))
+        for user in self._userdb:
+            print("{:<40} {:<28} {:<40}".format(user.name, user.surname, user.username))
+        print("\n", 102 * "=", "\n")
+        sleep(1)
 
     def delete_user(self):
         """Deletes a user from the user list."""
@@ -384,11 +419,18 @@ class Control_Unit(SO_Control_Unit):
             print("\nThe user you are trying to delete is the active user! Change the user first to delete this user.\n")
             self.update_log(f"Attempted to delete the active user '{del_user}'. Request rejected.")
             sleep(1)
+        elif del_user == self._admin.username:
+            print("\nYou are trying to delete the admin user! You can't delete the system admin.\n")
+            self.update_log(f"Attempted to delete the admin user. Request rejected.")
+            sleep(1)
         else:
             if del_user in self._users:
-                self._users.remove(del_user)
+                self._users.remove(del_user) # Removes the username from the users set
+                for user in self._userdb: # Removes the User object from user database
+                    if del_user == user.username:
+                        self._userdb.remove(user)
                 print("\nThe username has been deleted from the user database! Returning to the main menu.\n")
-                self.update_log(f"The user {del_user} has been deleted.")
+                self.update_log(f"The user '{del_user}' has been deleted.")
                 sleep(1)
             else:
                 print("\nThis user doesn't exist! Returning to the main menu.")
@@ -396,7 +438,9 @@ class Control_Unit(SO_Control_Unit):
                 sleep(1)
 
     def auth(self, login):
-        """ Authenticates the user. It checks if the username entered by the user is in the user list."""
+        """ Authenticates the user. It checks if the username entered by the user is in the user list.
+        Even though there is a user database, which stores all User objects in the system, users set is used
+        for authorization because membership test with sets is easer (e.g. rejecting duplicate usernames, etc.)"""
         if login in control_unit.users:
             print("You are authorized to use the system!\n")
             self.update_log(f"The user '{login}' has been authorized to use the system.")
@@ -722,7 +766,16 @@ class User(System_User):
     def turn_on(self):
         control_unit.start_car(car)
 
-    # Only a getter for username is added because no other attributes will be called for and be amended in the program.
+    # Only a getters are added, because we never explicitly set the attributes of the User objects.
+
+    @property
+    def name(self):
+        return self._name
+
+    @property
+    def surname(self):
+        return self._surname
+
     @property
     def username(self):
         return self._username
@@ -971,7 +1024,7 @@ class TMA_DB(Sign_DB):
 
 # Creating permanent objects
 admin = User('John', 'Doe', 'admin')
-control_unit = Control_Unit({'admin'})
+control_unit = Control_Unit(admin)  # Passes admin as the admin user
 car = Car('Car', 'N', 1)
 v2vcomms = V2V_Comms()
 lidar = Lidar()
@@ -1050,11 +1103,7 @@ def inf_menu():
                 control_unit.read_log()
                 sleep(2)
             elif choice == 3:
-                print("\nThe current authorized users of the system:")
-                for name in control_unit.users:
-                    print(name)
-                print("")
-                sleep(1)
+                control_unit.list_users()
             elif choice == 4:
                 control_unit.list_obstacles()
             elif choice == 5:

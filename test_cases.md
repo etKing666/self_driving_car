@@ -199,22 +199,35 @@ Test case #5 covers the testing of basic user functionality (validation testing)
 1. Username : admin
 2. Interact with the car (2)
 3. Add a user (10)
-4. Username: test_user
-5. Return to main menu (12)
-6. Change user(3)
-7. Username: test_user
-8. Interact with the car (2)
-9. Delete a user (11)
-10. Username: admin
+4. Name: Test
+5. Surname: User
+6. Username: test_user
+7. Add a user (10)
+8. Name: Test2
+9. Surname: User2
+10. Username: test_user2
+11. Return to main menu (12)
+12. Change user(3)
+13. Username: test_user
+14. Interact with the car (2)
+15. Delete a user (11)
+16. Username: admin
+17. Delete a user (11)
+18. Username: test_user
+19. Delete a user (11)
+20. Username: test_user2
 
 ### Desired end state:
 
 The car log should read as follows:
 
 INCIDENT                           
-The user admin has been deleted.                                                           
-The user 'test_user' has been authorized to use the system.                              
-The user test_user has been added.                                                      
+The user 'test_user2' has been deleted.                                                    
+Attempted to delete the active user 'test_user'. Request rejected.                         
+Attempted to delete the admin user. Request rejected.                                      
+The user 'test_user' has been authorized to use the system.                                
+The user 'test_user2' has been added.                                                      
+The user 'test_user' has been added.                                                       
 The user 'admin' has been authorized to use the system.  
 
 ## Test Case #6 (Complex)
@@ -270,4 +283,4 @@ Minimum Speed Limit (60 km/h) sign detected. Car's speed is set to 60.
 The car's speed has been reduced. The car's speed is set to 30 km/h.                      
 The car's speed has been reduced. The car's speed is set to 40 km/h.                 
 The car has been activated. The car's speed is set to 50 km/h.                           
-The user 'admin' has been authorized to use the system.     
+The user 'admin' has been authorized to use the system.

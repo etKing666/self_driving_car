@@ -8,13 +8,17 @@ from datetime import datetime
 class SO_Control_Unit(ABC):
     """Control unit stores all the critical information and manages the car."""
 
-    def __init__(self, users, userdb=None, obstacles=None, status=False, log=None, active_user=None):
-        self._users = users
+    def __init__(self, admin, userdb=None, users=None, obstacles=None, status=False, log=None, active_user=None):
+        self._admin = admin
+        self._userdb = []
+        self._users = {admin.username}
         self._userdb = []
         self._obstacles = []
-        self._log = []
         self._status = status
-        self._active_user = active_user
+        self._log = []
+        self._active_user = None
+
+        self._userdb.append(admin)
 
     @abstractmethod
     def add_user(self):
@@ -375,7 +379,7 @@ class Control_Unit(SO_Control_Unit):
     """Control unit is the central unit which controls all the interaction between the user and all the components
     of the car."""
     def __init__(self, admin, userdb=None, users=None, obstacles=None, status=False, log=None, active_user=None):
-        self._admin = admin
+        self._admin = admin  # Stores the admin user
         self._userdb = []
         self._users = {admin.username}  # Adds username of the admin to the users set.
         self._userdb = []
@@ -767,7 +771,6 @@ class User(System_User):
         control_unit.start_car(car)
 
     # Only a getters are added, because we never explicitly set the attributes of the User objects.
-
     @property
     def name(self):
         return self._name
@@ -960,12 +963,12 @@ class TSRS(Sign_Recognition_System):
         while True:
             try:
                 self._sign_code = int(input("""\nPlease select a traffic sign to put on the road:
-         1. Speed Limit (50 km/h)
-         2. Speed Limit (90 km/h)
-         3. Stop
-         4. Slippery Road
-         5. Minimum Speed Limit (60 km/h)
-         Your selection [1-5]: """))
+ 1. Speed Limit (50 km/h)
+ 2. Speed Limit (90 km/h)
+ 3. Stop
+ 4. Slippery Road
+ 5. Minimum Speed Limit (60 km/h)
+Your selection [1-5]: """))
                 if self._sign_code < 1 or self._sign_code > 5:
                     print("Invalid input. Please provide a valid input [1-5]")
                     sleep(1)
